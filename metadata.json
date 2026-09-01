@@ -1,0 +1,10 @@
+{
+  "name": "Previsão do Tempo Agora",
+  "description": "Previsão do tempo precisa e em tempo real para todo o Brasil. Informações completas de hoje, 7 dias e 15 dias com design minimalista e carregamento ultrarrápido.",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
