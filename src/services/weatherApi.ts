@@ -251,33 +251,9 @@ export function getWindDirectionLabel(degrees: number): string {
   return directions[index];
 }
 
+// Open-Meteo official calculation and state cache
 const cache = new Map<string, { data: FullWeatherData; timestamp: number }>();
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
-
-// Multi-model calibration: AccuWeather-grade ensemble incorporating ECMWF IFS (European Centre for Medium-Range Weather Forecasts)
-// blended with GFS and calibrated with Brazilian INMET regional observation benchmarks.
-export function calculateAccuWeatherRealFeel(
-  temp: number,
-  humidity: number,
-  windSpeedKmH: number,
-  uvIndex: number,
-  isDay: boolean = true
-): number {
-  // If temperature is cold/mild (<= 15°C), wind chill is the dominant perceived factor
-  if (temp <= 15) {
-    const v = Math.max(1, windSpeedKmH);
-    const windChill = 13.12 + 0.6215 * temp - 11.37 * Math.pow(v, 0.16) + 0.3965 * temp * Math.pow(v, 0.16);
-    return Math.round(windChill);
-  }
-
-  // If warm (> 20°C), vapor pressure (humidity) + solar radiation (UV index) drives the AccuWeather RealFeel®
-  const vaporPressureHPa = (humidity / 100) * 6.105 * Math.exp((17.27 * temp) / (237.7 + temp));
-  const heatApparent = temp + 0.33 * vaporPressureHPa - 0.7 * (windSpeedKmH / 3.6) - 4.0;
-
-  // Add solar load factor during daytime according to UV index
-  const solarFactor = isDay ? Math.min(4, uvIndex * 0.45) : 0;
-  return Math.round(heatApparent + solarFactor);
-}
 
 export async function fetchWeatherData(location: LocationData): Promise<FullWeatherData> {
   // Validate and sanitize coordinates
@@ -360,11 +336,10 @@ export async function fetchWeatherData(location: LocationData): Promise<FullWeat
   const uvIndex = Math.round((raw.current?.uv_index ?? 5) * 10) / 10;
   const isDay = raw.current?.is_day === 1;
 
-  // AccuWeather RealFeel® precision synthesis
-  const accuRealFeel = calculateAccuWeatherRealFeel(temp, humidity, windSpeed, uvIndex, isDay);
-  const rawFeelsLike = Math.round(raw.current?.apparent_temperature ?? temp);
-  // Blend model apparent temp with AccuWeather RealFeel solar-adjusted index for maximum accuracy
-  const feelsLike = Math.round(accuRealFeel * 0.6 + rawFeelsLike * 0.4);
+  // Open-Meteo official apparent temperature (Sensação Térmica)
+  const feelsLike = Math.round(
+    raw.current?.apparent_temperature ?? raw.current?.temperature_2m ?? temp
+  );
 
   const current: CurrentWeather = {
     temp,
@@ -564,7 +539,7 @@ async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutM
   }
 }
 
-// Reverse Geocoding for GPS coordinates with multiple resilient providers
+// Reverse Geocoding for GPS coordinates with multiple resilient, non-banned providers
 export async function getCityFromCoordinates(lat: number, lon: number): Promise<LocationData> {
   // Find closest pre-indexed city as immediate baseline
   let closest = BRAZIL_CAPITALS[0];
@@ -587,42 +562,43 @@ export async function getCityFromCoordinates(lat: number, lon: number): Promise<
     };
   }
 
-  // Try Provider 1: BigDataCloud Reverse Geocoding (Free, no key required, fast)
+  // Try Provider 1: Photon by Komoot (Fast, free OSM-based, CORS-friendly, no IP blocking)
   try {
-    const bdcUrl = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=pt`;
-    const res = await fetchWithTimeout(bdcUrl, {}, 4000);
+    const photonUrl = `https://photon.komoot.io/reverse?lat=${lat}&lon=${lon}`;
+    const res = await fetchWithTimeout(photonUrl, {}, 3500);
     if (res.ok) {
       const data = await res.json();
-      const cityName = data.city || data.locality || data.principalSubdivision || '';
-      const stateName = data.principalSubdivision || closest.state;
-      const stateCode = data.principalSubdivisionCode ? data.principalSubdivisionCode.replace('BR-', '') : closest.stateCode;
+      if (data?.features && data.features.length > 0) {
+        const props = data.features[0]?.properties || {};
+        const cityName = props.city || props.town || props.locality || props.district || props.name || '';
+        const stateName = props.state || closest.state;
 
-      if (cityName) {
-        return {
-          id: `gps-${lat.toFixed(4)}-${lon.toFixed(4)}`,
-          name: cityName,
-          state: stateName,
-          stateCode: stateCode,
-          country: 'Brasil',
-          lat,
-          lon
-        };
+        if (cityName) {
+          return {
+            id: `gps-${lat.toFixed(4)}-${lon.toFixed(4)}`,
+            name: cityName,
+            state: stateName,
+            stateCode: closest?.stateCode || '',
+            country: 'Brasil',
+            lat,
+            lon
+          };
+        }
       }
     }
   } catch (err) {
-    console.warn('BigDataCloud reverse geocode error:', err);
+    console.warn('Photon reverse geocode error:', err);
   }
 
   // Try Provider 2: OpenStreetMap Nominatim
   try {
-    const nomUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=12&addressdetails=1`;
-    const res = await fetchWithTimeout(nomUrl, {
-      headers: { 'Accept-Language': 'pt-BR,pt;q=0.9' }
-    }, 4000);
+    const nomUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1`;
+    const res = await fetchWithTimeout(nomUrl, {}, 3500);
     if (res.ok) {
       const data = await res.json();
       const addr = data.address || {};
-      const cityName = addr.city || addr.town || addr.municipality || addr.village || addr.suburb || '';
+      const cityName =
+        addr.city || addr.town || addr.municipality || addr.village || addr.suburb || '';
       const stateName = addr.state || closest.state;
 
       if (cityName) {
@@ -641,7 +617,7 @@ export async function getCityFromCoordinates(lat: number, lon: number): Promise<
     console.warn('Nominatim reverse geocode error:', err);
   }
 
-  // Fallback to closest pre-mapped city or generic GPS identifier
+  // Safe fallback to closest known municipality or clean GPS location
   return {
     id: `gps-${lat.toFixed(4)}-${lon.toFixed(4)}`,
     name: closest ? closest.name : 'Minha Localização',

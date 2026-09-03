@@ -148,6 +148,7 @@ export default function App() {
   // Institutional Modal State
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalInitialTab, setModalInitialTab] = useState<InstitutionalTab>('privacy');
+  const [gpsNotification, setGpsNotification] = useState<string | null>(null);
 
   const [favorites, setFavorites] = useState<LocationData[]>(() => {
     try {
@@ -199,51 +200,67 @@ export default function App() {
     setSelectedLocation(location);
   };
 
-  // Resilient GPS handler with Geolocation API + IP fallback
+  // Resilient GPS handler with multi-stage accuracy and non-blocking notifications
   const handleUseGps = () => {
     setIsGpsLoading(true);
+    setGpsNotification(null);
 
     const tryIpFallback = async () => {
       try {
         const ipLocation = await getApproximateLocationByIp();
         if (ipLocation) {
           setSelectedLocation(ipLocation);
+          setGpsNotification(`Localização aproximada detectada: ${ipLocation.name}`);
+          setTimeout(() => setGpsNotification(null), 4000);
           return;
         }
       } catch (err) {
         console.warn('IP fallback failed:', err);
       }
-      alert(
-        'Não foi possível obter sua localização exata. Por favor, digite o nome da sua cidade no campo de busca.'
+      setGpsNotification(
+        'Não foi possível obter a localização GPS. Você pode escolher sua cidade na lista suspensa ou no campo de busca.'
       );
+      setTimeout(() => setGpsNotification(null), 5000);
     };
 
-    if (!navigator.geolocation) {
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
       tryIpFallback().finally(() => setIsGpsLoading(false));
       return;
     }
 
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        try {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-          const matchedLocation = await getCityFromCoordinates(lat, lon);
-          setSelectedLocation(matchedLocation);
-        } catch (err) {
-          console.error('Error resolving GPS coordinates:', err);
-          await tryIpFallback();
-        } finally {
-          setIsGpsLoading(false);
-        }
-      },
-      async (geoError) => {
-        console.warn('Browser geolocation denied or timed out:', geoError.message);
-        // Resiliently fallback to IP without blocking the user
+    const onGpsSuccess = async (position: GeolocationPosition) => {
+      try {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        const matchedLocation = await getCityFromCoordinates(lat, lon);
+        setSelectedLocation(matchedLocation);
+      } catch (err) {
+        console.error('Error resolving GPS coordinates:', err);
         await tryIpFallback();
+      } finally {
         setIsGpsLoading(false);
+      }
+    };
+
+    const tryLowAccuracy = () => {
+      navigator.geolocation.getCurrentPosition(
+        onGpsSuccess,
+        async (geoError) => {
+          console.warn('Geolocation low-accuracy fallback error:', geoError.message);
+          await tryIpFallback();
+          setIsGpsLoading(false);
+        },
+        { timeout: 7000, enableHighAccuracy: false, maximumAge: 300000 }
+      );
+    };
+
+    // First attempt high accuracy (satellites), fall back to cell/wifi if taking too long
+    navigator.geolocation.getCurrentPosition(
+      onGpsSuccess,
+      () => {
+        tryLowAccuracy();
       },
-      { timeout: 7500, enableHighAccuracy: true }
+      { timeout: 4500, enableHighAccuracy: true, maximumAge: 60000 }
     );
   };
 
@@ -252,6 +269,7 @@ export default function App() {
       const exists = prev.some(
         (f) =>
           f.id === location.id ||
+          f.name.toLowerCase() === location.name.toLowerCase() ||
           (Math.abs(f.lat - location.lat) < 0.05 && Math.abs(f.lon - location.lon) < 0.05)
       );
       let updated: LocationData[];
@@ -260,6 +278,7 @@ export default function App() {
           (f) =>
             !(
               f.id === location.id ||
+              f.name.toLowerCase() === location.name.toLowerCase() ||
               (Math.abs(f.lat - location.lat) < 0.05 && Math.abs(f.lon - location.lon) < 0.05)
             )
         );
@@ -274,6 +293,32 @@ export default function App() {
       return updated;
     });
   };
+
+  const handleRemoveFavorite = (location: LocationData) => {
+    setFavorites((prev) => {
+      const updated = prev.filter(
+        (f) =>
+          !(
+            f.id === location.id ||
+            f.name.toLowerCase() === location.name.toLowerCase() ||
+            (Math.abs(f.lat - location.lat) < 0.05 && Math.abs(f.lon - location.lon) < 0.05)
+          )
+      );
+      try {
+        localStorage.setItem('previsao_tempo_favs', JSON.stringify(updated));
+      } catch {
+        // ignore
+      }
+      return updated;
+    });
+  };
+
+  const isCurrentFavorite = favorites.some(
+    (f) =>
+      f.id === selectedLocation.id ||
+      f.name.toLowerCase() === selectedLocation.name.toLowerCase() ||
+      (Math.abs(f.lat - selectedLocation.lat) < 0.05 && Math.abs(f.lon - selectedLocation.lon) < 0.05)
+  );
 
   const todayDaily = weatherData?.daily?.[0];
 
@@ -298,6 +343,19 @@ export default function App() {
 
       {/* Main Content Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-5 space-y-3.5 sm:space-y-4">
+        {/* GPS Notification Toast if triggered */}
+        {gpsNotification && (
+          <div className="p-3 bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 rounded-2xl text-xs font-semibold text-blue-800 dark:text-blue-200 flex items-center justify-between shadow-xs animate-in fade-in">
+            <span>{gpsNotification}</span>
+            <button
+              onClick={() => setGpsNotification(null)}
+              className="text-blue-500 hover:text-blue-700 ml-2 font-bold cursor-pointer"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
         {/* PWA Mobile Shortcut / Install Banner */}
         <PWAInstallBanner />
 
@@ -308,6 +366,8 @@ export default function App() {
               currentLocation={selectedLocation}
               favorites={favorites}
               onSelectCity={handleSelectCity}
+              onRemoveFavorite={handleRemoveFavorite}
+              onAddFavorite={handleToggleFavorite}
             />
           </div>
           <CapitalChips
@@ -358,6 +418,8 @@ export default function App() {
                   location={selectedLocation}
                   current={weatherData.current}
                   todayDaily={todayDaily}
+                  isFavorite={isCurrentFavorite}
+                  onToggleFavorite={handleToggleFavorite}
                 />
 
                 {/* 2. Previsão Hora a Hora (Linha única: temperatura em cima, e abaixo: ícone, vento e hora) */}

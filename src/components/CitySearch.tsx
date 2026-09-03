@@ -219,14 +219,30 @@ export const CitySearch: React.FC<CitySearchProps> = ({
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 mt-1">
                     {favorites.map((fav) => (
-                      <button
+                      <div
                         key={fav.id}
-                        onClick={() => handleSelect(fav)}
-                        className="px-3 py-2 text-left text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-amber-50 dark:hover:bg-amber-950/30 hover:text-amber-900 rounded-xl transition-colors flex items-center justify-between"
+                        className="group flex items-center justify-between px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-amber-50 dark:hover:bg-amber-950/30 rounded-xl transition-colors"
                       >
-                        <span>{fav.name}</span>
-                        <span className="text-[10px] text-slate-400 font-mono">{fav.stateCode}</span>
-                      </button>
+                        <button
+                          type="button"
+                          onClick={() => handleSelect(fav)}
+                          className="flex-1 text-left flex items-center justify-between pr-2 cursor-pointer"
+                        >
+                          <span className="truncate">{fav.name}</span>
+                          <span className="text-[10px] text-slate-400 font-mono">{fav.stateCode}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onToggleFavorite(fav);
+                          }}
+                          title={`Remover ${fav.name} dos favoritos`}
+                          className="p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     ))}
                   </div>
                 </div>

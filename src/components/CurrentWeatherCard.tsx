@@ -9,7 +9,8 @@ import {
   Umbrella,
   AlertTriangle,
   Moon,
-  Sparkles
+  Sparkles,
+  Star
 } from 'lucide-react';
 import { CurrentWeather, DailyForecastItem, LocationData } from '../types';
 import { WeatherIcon } from './WeatherIcon';
@@ -19,12 +20,16 @@ interface CurrentWeatherCardProps {
   location: LocationData;
   current: CurrentWeather;
   todayDaily?: DailyForecastItem;
+  isFavorite?: boolean;
+  onToggleFavorite?: (location: LocationData) => void;
 }
 
 export const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
   location,
   current,
-  todayDaily
+  todayDaily,
+  isFavorite = false,
+  onToggleFavorite
 }) => {
   const uvInfo = getUVLevel(current.uvIndex);
   const windDir = getWindDirectionLabel(current.windDirection);
@@ -188,14 +193,35 @@ export const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
                 <MapPin className="w-4 h-4" />
               </div>
               <div>
-                <h2 className="text-xl sm:text-2xl font-black tracking-tight leading-none text-white drop-shadow-xs">
-                  {location.name}
-                  {location.stateCode && (
-                    <span className="opacity-80 font-semibold text-lg ml-1.5">
-                      • {location.stateCode}
-                    </span>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-xl sm:text-2xl font-black tracking-tight leading-none text-white drop-shadow-xs">
+                    {location.name}
+                    {location.stateCode && (
+                      <span className="opacity-80 font-semibold text-lg ml-1.5">
+                        • {location.stateCode}
+                      </span>
+                    )}
+                  </h2>
+                  {onToggleFavorite && (
+                    <button
+                      type="button"
+                      onClick={() => onToggleFavorite(location)}
+                      title={isFavorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+                      id="card-toggle-favorite-btn"
+                      className={`p-1.5 rounded-full transition-all cursor-pointer ${
+                        isFavorite
+                          ? 'bg-amber-400/20 text-amber-300 hover:bg-amber-400/30'
+                          : 'bg-white/10 text-white/70 hover:text-amber-300 hover:bg-white/20'
+                      }`}
+                    >
+                      <Star
+                        className={`w-4 h-4 ${
+                          isFavorite ? 'fill-amber-400 text-amber-400' : ''
+                        }`}
+                      />
+                    </button>
                   )}
-                </h2>
+                </div>
                 <p className={`text-xs font-medium mt-1 ${theme.mutedText}`}>
                   {location.state || location.country}
                 </p>
@@ -253,7 +279,7 @@ export const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
 
                 <div className={`flex items-center gap-2.5 text-xs sm:text-sm font-semibold mt-1.5 flex-wrap ${theme.mutedText}`}>
                   <span>
-                    Sensação RealFeel®:{' '}
+                    Sensação Térmica:{' '}
                     <strong className="text-white font-black">{current.feelsLike}°C</strong>
                   </span>
                   {todayDaily && (
@@ -271,7 +297,7 @@ export const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
                   )}
                   <span className="opacity-40 hidden sm:inline">•</span>
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/15 text-white/90 border border-white/20">
-                    Dados AccuWeather / ECMWF
+                    Dados Open-Meteo Oficial
                   </span>
                 </div>
               </div>
