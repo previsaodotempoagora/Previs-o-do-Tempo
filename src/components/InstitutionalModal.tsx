@@ -64,27 +64,27 @@ export const InstitutionalModal: React.FC<InstitutionalModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200"
       id="institutional-modal-backdrop"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
       <div
-        className="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+        className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200 transition-colors"
         id="institutional-modal-container"
       >
         {/* Modal Header */}
-        <div className="px-5 py-4 sm:px-6 sm:py-5 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
+        <div className="px-5 py-4 sm:px-6 sm:py-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/60">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 shrink-0">
               <Globe2 className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base sm:text-lg font-extrabold text-slate-900 leading-tight">
+              <h2 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white leading-tight">
                 Previsão do Tempo Agora
               </h2>
-              <p className="text-xs text-slate-500 font-medium">
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                 Transparência, Conformidade LGPD & Informações Institucionais
               </p>
             </div>
@@ -93,7 +93,7 @@ export const InstitutionalModal: React.FC<InstitutionalModalProps> = ({
           <button
             onClick={onClose}
             id="close-institutional-modal-btn"
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors"
+            className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors cursor-pointer"
             title="Fechar"
           >
             <X className="w-5 h-5" />
@@ -101,14 +101,14 @@ export const InstitutionalModal: React.FC<InstitutionalModalProps> = ({
         </div>
 
         {/* Tabs Bar */}
-        <div className="flex border-b border-slate-200 px-4 sm:px-6 bg-white overflow-x-auto no-scrollbar gap-2">
+        <div className="flex border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 bg-white dark:bg-slate-900 overflow-x-auto no-scrollbar gap-2">
           <button
             onClick={() => setActiveTab('privacy')}
             id="tab-privacy-btn"
-            className={`py-3 px-3 text-xs sm:text-sm font-bold border-b-2 whitespace-nowrap flex items-center gap-2 transition-all ${
+            className={`py-3 px-3 text-xs sm:text-sm font-bold border-b-2 whitespace-nowrap flex items-center gap-2 transition-all cursor-pointer ${
               activeTab === 'privacy'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'border-blue-600 text-blue-600 dark:text-blue-400'
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
             <ShieldCheck className="w-4 h-4" />
@@ -118,10 +118,10 @@ export const InstitutionalModal: React.FC<InstitutionalModalProps> = ({
           <button
             onClick={() => setActiveTab('terms')}
             id="tab-terms-btn"
-            className={`py-3 px-3 text-xs sm:text-sm font-bold border-b-2 whitespace-nowrap flex items-center gap-2 transition-all ${
+            className={`py-3 px-3 text-xs sm:text-sm font-bold border-b-2 whitespace-nowrap flex items-center gap-2 transition-all cursor-pointer ${
               activeTab === 'terms'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'border-blue-600 text-blue-600 dark:text-blue-400'
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
             <FileText className="w-4 h-4" />
@@ -131,10 +131,10 @@ export const InstitutionalModal: React.FC<InstitutionalModalProps> = ({
           <button
             onClick={() => setActiveTab('about')}
             id="tab-about-btn"
-            className={`py-3 px-3 text-xs sm:text-sm font-bold border-b-2 whitespace-nowrap flex items-center gap-2 transition-all ${
+            className={`py-3 px-3 text-xs sm:text-sm font-bold border-b-2 whitespace-nowrap flex items-center gap-2 transition-all cursor-pointer ${
               activeTab === 'about'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'border-blue-600 text-blue-600 dark:text-blue-400'
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
             <Info className="w-4 h-4" />
@@ -144,10 +144,10 @@ export const InstitutionalModal: React.FC<InstitutionalModalProps> = ({
           <button
             onClick={() => setActiveTab('contact')}
             id="tab-contact-btn"
-            className={`py-3 px-3 text-xs sm:text-sm font-bold border-b-2 whitespace-nowrap flex items-center gap-2 transition-all ${
+            className={`py-3 px-3 text-xs sm:text-sm font-bold border-b-2 whitespace-nowrap flex items-center gap-2 transition-all cursor-pointer ${
               activeTab === 'contact'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'border-blue-600 text-blue-600 dark:text-blue-400'
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
             <Mail className="w-4 h-4" />
@@ -156,7 +156,7 @@ export const InstitutionalModal: React.FC<InstitutionalModalProps> = ({
         </div>
 
         {/* Content Body */}
-        <div className="flex-1 overflow-y-auto p-5 sm:p-7 text-sm text-slate-700 leading-relaxed space-y-6 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-5 sm:p-7 text-sm text-slate-700 dark:text-slate-300 leading-relaxed space-y-6 custom-scrollbar">
           {/* POLÍTICA DE PRIVACIDADE */}
           {activeTab === 'privacy' && (
             <div className="space-y-5" id="privacy-content">
@@ -516,11 +516,11 @@ export const InstitutionalModal: React.FC<InstitutionalModalProps> = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="px-5 py-3 sm:px-6 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+        <div className="px-5 py-3 sm:px-6 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
           <span>Previsão do Tempo Agora © {new Date().getFullYear()}</span>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 font-bold transition-all shadow-xs"
+            className="px-4 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold transition-all shadow-xs cursor-pointer"
           >
             Fechar
           </button>

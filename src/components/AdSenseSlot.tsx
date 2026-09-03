@@ -22,20 +22,23 @@ export const AdSenseSlot: React.FC<AdSenseSlotProps> = ({
       if (typeof window !== 'undefined' && window.adsbygoogle) {
         (window.adsbygoogle = window.adsbygoogle || []).push({});
       }
-    } catch (e) {
+    } catch {
       // AdSense script will run when active
     }
   }, []);
 
   return (
-    <div className={`w-full flex flex-col items-center my-4 ${className}`} id={`adsense-wrapper-${slotId}`}>
+    <div
+      className={`w-full flex flex-col items-center my-4 ${className}`}
+      id={`adsense-wrapper-${slotId}`}
+    >
       {/* Official AdSense label mandatory by policy */}
-      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+      <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
         Publicidade
       </span>
 
       {/* Ad container */}
-      <div className="w-full bg-slate-50 border border-slate-200 rounded-2xl min-h-[90px] flex items-center justify-center p-3 text-center overflow-hidden">
+      <div className="w-full bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 rounded-2xl min-h-[90px] flex items-center justify-center p-3 text-center overflow-hidden">
         {/* Real AdSense tag */}
         <ins
           className="adsbygoogle block w-full text-center"
@@ -46,13 +49,13 @@ export const AdSenseSlot: React.FC<AdSenseSlotProps> = ({
           data-full-width-responsive="true"
         />
 
-        {/* Fallback clean placeholder banner */}
-        <div className="flex flex-col items-center justify-center text-slate-400 text-xs py-2">
-          <span className="font-semibold text-slate-500 text-[11px]">
-            Espaço Reservado para Anúncios do Google AdSense
+        {/* Clean fallback banner */}
+        <div className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 text-xs py-2">
+          <span className="font-bold text-slate-500 dark:text-slate-400 text-[11px]">
+            Espaço Reservado para Anúncios
           </span>
-          <span className="text-[10px] text-slate-400">
-            Formato Responsivo • Alta Relevância
+          <span className="text-[10px] text-slate-400 dark:text-slate-500">
+            Formato Responsivo • Google AdSense
           </span>
         </div>
       </div>

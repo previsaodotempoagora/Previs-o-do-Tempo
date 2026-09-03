@@ -80,6 +80,8 @@ export interface FullWeatherData {
 
 export type ForecastTab = 'today' | '7days' | '15days';
 
+export type ThemeMode = 'auto' | 'light' | 'dark';
+
 export interface UVLevelInfo {
   level: string;
   color: string;

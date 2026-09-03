@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { ChevronLeft, ChevronRight, Clock, Droplet } from 'lucide-react';
+import React, { useRef, useState, useMemo } from 'react';
+import { ChevronLeft, ChevronRight, Clock, Wind, Droplets, TrendingUp, TrendingDown } from 'lucide-react';
 import { HourlyForecastItem } from '../types';
 import { WeatherIcon } from './WeatherIcon';
 
@@ -7,8 +7,48 @@ interface HourlyForecastProps {
   hourly: HourlyForecastItem[];
 }
 
+// Thermal palette helper for temperature nodes
+function getThermalDetails(temp: number) {
+  if (temp >= 32) {
+    return {
+      dotColor: '#ef4444',
+      badgeBg: 'bg-red-500 text-white',
+      textColor: 'text-red-600 dark:text-red-400',
+      label: 'Muito Quente'
+    };
+  }
+  if (temp >= 27) {
+    return {
+      dotColor: '#f97316',
+      badgeBg: 'bg-orange-500 text-white',
+      textColor: 'text-orange-600 dark:text-orange-400',
+      label: 'Quente'
+    };
+  }
+  if (temp >= 22) {
+    return {
+      dotColor: '#0284c7',
+      badgeBg: 'bg-sky-500 text-white',
+      textColor: 'text-sky-600 dark:text-sky-400',
+      label: 'Agradável'
+    };
+  }
+  return {
+    dotColor: '#3b82f6',
+    badgeBg: 'bg-blue-600 text-white',
+    textColor: 'text-blue-600 dark:text-blue-400',
+    label: 'Fresco'
+  };
+}
+
 export const HourlyForecast: React.FC<HourlyForecastProps> = ({ hourly }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
+  // Early return if no hourly items are provided
+  if (!hourly || !Array.isArray(hourly) || hourly.length === 0) {
+    return null;
+  }
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
@@ -17,90 +57,392 @@ export const HourlyForecast: React.FC<HourlyForecastProps> = ({ hourly }) => {
     }
   };
 
+  // Dimensions for the temperature timeline SVG
+  const COL_WIDTH = 84;
+  const SVG_HEIGHT = 150;
+  const TOP_PADDING = 38; // Headroom for temperature label above crest
+  const BOTTOM_PADDING = 24; // Baseline clearance above bottom of chart
+  const USABLE_HEIGHT = SVG_HEIGHT - TOP_PADDING - BOTTOM_PADDING;
+
+  // Temperature calculations for the dynamic vertical curve
+  const { points, minTemp, maxTemp, pathD, areaD, yForMax, yForMin, currentTrend } = useMemo(() => {
+    if (!hourly || hourly.length === 0) {
+      return {
+        points: [],
+        minTemp: 0,
+        maxTemp: 0,
+        pathD: '',
+        areaD: '',
+        yForMax: TOP_PADDING,
+        yForMin: SVG_HEIGHT - BOTTOM_PADDING,
+        currentTrend: 'estável'
+      };
+    }
+
+    const validTemps = hourly.map((h) =>
+      typeof h.temp === 'number' && !isNaN(h.temp) ? h.temp : 20
+    );
+    const min = Math.min(...validTemps);
+    const max = Math.max(...validTemps);
+    const rawRange = max - min;
+    // Guarantee an expressive, perceptible vertical rise and fall (at least 3.5 degrees visual scale)
+    const range = Math.max(rawRange, 3.5);
+
+    const pts = hourly.map((item, i) => {
+      const tempVal = typeof item.temp === 'number' && !isNaN(item.temp) ? item.temp : 20;
+      const x = i * COL_WIDTH + COL_WIDTH / 2;
+      // High temperature -> smaller y (closer to top), low temperature -> larger y (lower)
+      const ratio = Math.max(0, Math.min(1, (tempVal - min) / range));
+      const calcY = TOP_PADDING + (1 - ratio) * USABLE_HEIGHT;
+      const y = isFinite(calcY) ? calcY : TOP_PADDING + USABLE_HEIGHT / 2;
+      const thermal = getThermalDetails(tempVal);
+      return { x, y, temp: tempVal, item, index: i, thermal };
+    });
+
+    // Generate organic smooth curve through all (x, y) coordinates
+    let d = '';
+    if (pts.length === 1) {
+      d = `M ${(pts[0].x - 20).toFixed(1)} ${pts[0].y.toFixed(1)} L ${(pts[0].x + 20).toFixed(1)} ${pts[0].y.toFixed(1)}`;
+    } else if (pts.length > 1) {
+      d = `M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;
+      const tension = 3.6;
+      for (let i = 0; i < pts.length - 1; i++) {
+        const p0 = pts[i === 0 ? 0 : i - 1];
+        const p1 = pts[i];
+        const p2 = pts[i + 1];
+        const p3 = pts[i + 2] || p2;
+
+        const cp1x = p1.x + (p2.x - p0.x) / tension;
+        const cp1y = Math.max(TOP_PADDING - 6, Math.min(SVG_HEIGHT - BOTTOM_PADDING + 10, p1.y + (p2.y - p0.y) / tension));
+        const cp2x = p2.x - (p3.x - p1.x) / tension;
+        const cp2y = Math.max(TOP_PADDING - 6, Math.min(SVG_HEIGHT - BOTTOM_PADDING + 10, p2.y - (p3.y - p1.y) / tension));
+
+        d += ` C ${cp1x.toFixed(1)} ${cp1y.toFixed(1)}, ${cp2x.toFixed(1)} ${cp2y.toFixed(1)}, ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
+      }
+    }
+
+    // Area path closed to the bottom of the chart
+    let area = '';
+    if (pts.length > 0 && d) {
+      const firstX = pts[0].x;
+      const lastX = pts[pts.length - 1].x;
+      area = `${d} L ${lastX.toFixed(1)} ${SVG_HEIGHT} L ${firstX.toFixed(1)} ${SVG_HEIGHT} Z`;
+    }
+
+    // Y position for max and min reference lines
+    const maxRatio = (max - min) / range;
+    const yMax = TOP_PADDING + (1 - maxRatio) * USABLE_HEIGHT;
+    const yMin = TOP_PADDING + USABLE_HEIGHT;
+
+    // Detect near-term trend from next 4 hours
+    let trend = 'estável';
+    if (pts.length >= 3) {
+      const delta = pts[2].temp - pts[0].temp;
+      if (delta >= 1) trend = 'subindo';
+      else if (delta <= -1) trend = 'descendo';
+    }
+
+    return {
+      points: pts,
+      minTemp: min,
+      maxTemp: max,
+      pathD: d,
+      areaD: area,
+      yForMax: yMax,
+      yForMin: yMin,
+      currentTrend: trend
+    };
+  }, [hourly]);
+
+  const totalWidth = Math.max(COL_WIDTH, (hourly?.length || 0) * COL_WIDTH);
+
   return (
-    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-4 sm:p-6" id="hourly-forecast-card">
-      <div className="flex items-center justify-between mb-4">
+    <div
+      className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm p-4 sm:p-5 transition-colors"
+      id="hourly-forecast-card"
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between mb-3.5">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-blue-50 text-blue-600 border border-blue-100">
+          <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/50 shadow-2xs">
             <Clock className="w-4 h-4" />
           </div>
-          <h3 className="font-extrabold text-sm sm:text-base text-slate-900 tracking-tight">
-            Previsão Hora a Hora (Próximas 24h)
-          </h3>
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="font-black text-sm sm:text-base text-slate-900 dark:text-white tracking-tight">
+                Previsão Hora a Hora
+              </h3>
+              <span className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/80">
+                {currentTrend === 'subindo' ? (
+                  <>
+                    <TrendingUp className="w-3 h-3 text-amber-500" />
+                    <span>Em Elevação</span>
+                  </>
+                ) : currentTrend === 'descendo' ? (
+                  <>
+                    <TrendingDown className="w-3 h-3 text-blue-500" />
+                    <span>Em Queda</span>
+                  </>
+                ) : (
+                  <>
+                    <TrendingUp className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+                    <span>Linha do Tempo</span>
+                  </>
+                )}
+              </span>
+            </div>
+            <span className="text-[11px] text-slate-400 dark:text-slate-500 font-medium">
+              Curva térmica das próximas 24 horas (oscilando entre {minTemp}°C e {maxTemp}°C)
+            </span>
+          </div>
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 shrink-0">
           <button
+            type="button"
             onClick={() => scroll('left')}
-            className="p-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 transition-colors shadow-xs active:scale-95"
-            title="Rolar para esquerda"
+            className="p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-200 transition-colors shadow-2xs active:scale-95 cursor-pointer"
+            title="Rolar linha do tempo para trás"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
           <button
+            type="button"
             onClick={() => scroll('right')}
-            className="p-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 transition-colors shadow-xs active:scale-95"
-            title="Rolar para direita"
+            className="p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-200 transition-colors shadow-2xs active:scale-95 cursor-pointer"
+            title="Rolar linha do tempo para frente"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       </div>
 
+      {/* Dynamic Temperature Timeline Container */}
       <div
         ref={scrollRef}
-        className="flex items-stretch gap-2.5 overflow-x-auto no-scrollbar pb-2 pt-1 scroll-smooth"
+        className="relative overflow-x-auto no-scrollbar pt-2 pb-3 scroll-smooth rounded-2xl bg-gradient-to-b from-slate-50/90 to-slate-100/50 dark:from-slate-950/60 dark:to-slate-900/40 border border-slate-200/70 dark:border-slate-800/70"
       >
-        {hourly.map((item, index) => {
-          const isNow = index === 0;
-          return (
-            <div
-              key={item.time || index}
-              className={`flex-none w-[88px] sm:w-[96px] p-3 rounded-2xl flex flex-col items-center justify-between text-center transition-all ${
-                isNow
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20 border-none ring-2 ring-blue-400/40'
-                  : 'bg-slate-50 hover:bg-slate-100/80 border border-slate-200 text-slate-800'
-              }`}
+        <div style={{ width: `${totalWidth}px` }} className="relative select-none">
+          {/* 1. TOP PART: SVG with smooth curve that rises and falls with temperature */}
+          <div className="relative w-full h-[150px]">
+            <svg
+              className="absolute inset-0 w-full h-full pointer-events-none overflow-visible"
+              viewBox={`0 0 ${totalWidth} ${SVG_HEIGHT}`}
+              preserveAspectRatio="none"
             >
-              <span
-                className={`text-xs font-bold ${
-                  isNow ? 'text-white' : 'text-slate-600'
-                }`}
-              >
-                {item.hour}
-              </span>
+              <defs>
+                {/* Gradient for area under the thermal curve */}
+                <linearGradient id="hourlyTempFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.32" />
+                  <stop offset="60%" stopColor="#0ea5e9" stopOpacity="0.10" />
+                  <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.0" />
+                </linearGradient>
 
-              <div className="my-2.5">
-                <WeatherIcon
-                  name={item.condition.icon}
-                  className={`w-7 h-7 sm:w-8 sm:h-8 ${
-                    isNow ? 'text-white' : item.condition.color
-                  }`}
+                {/* Stroke line gradient for the curve */}
+                <linearGradient id="hourlyCurveStroke" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#2563eb" />
+                  <stop offset="35%" stopColor="#f59e0b" />
+                  <stop offset="65%" stopColor="#0284c7" />
+                  <stop offset="100%" stopColor="#4f46e5" />
+                </linearGradient>
+              </defs>
+
+              {/* Horizontal Reference Guides for Peak Max and Valley Min */}
+              {maxTemp !== minTemp && (
+                <>
+                  <line
+                    x1="0"
+                    y1={yForMax}
+                    x2={totalWidth}
+                    y2={yForMax}
+                    stroke="currentColor"
+                    strokeDasharray="3 4"
+                    className="text-amber-300/60 dark:text-amber-500/30"
+                    strokeWidth="1"
+                  />
+                  <line
+                    x1="0"
+                    y1={yForMin}
+                    x2={totalWidth}
+                    y2={yForMin}
+                    stroke="currentColor"
+                    strokeDasharray="3 4"
+                    className="text-blue-300/60 dark:text-blue-500/30"
+                    strokeWidth="1"
+                  />
+                </>
+              )}
+
+              {/* Area gradient under the curve */}
+              {areaD && (
+                <path d={areaD} fill="url(#hourlyTempFill)" />
+              )}
+
+              {/* Smooth dynamic curve that physically rises and falls with temperature */}
+              {pathD && (
+                <path
+                  d={pathD}
+                  fill="none"
+                  stroke="url(#hourlyCurveStroke)"
+                  strokeWidth="3.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
-              </div>
+              )}
 
-              <div className="flex items-baseline font-black text-base sm:text-lg tracking-tight">
-                {item.temp}°
-              </div>
+              {/* Vertical dotted guides connecting each node down towards the time label */}
+              {points.map((pt) => {
+                const isHovered = hoveredIdx === pt.index;
+                const isNow = pt.index === 0;
+                return (
+                  <line
+                    key={`guide-${pt.index}`}
+                    x1={pt.x}
+                    y1={pt.y + 7}
+                    x2={pt.x}
+                    y2={SVG_HEIGHT}
+                    stroke={isNow || isHovered ? '#3b82f6' : 'currentColor'}
+                    strokeDasharray="2 3"
+                    className="text-slate-300 dark:text-slate-700"
+                    strokeWidth={isNow || isHovered ? '1.5' : '1'}
+                    opacity={isNow || isHovered ? '0.75' : '0.3'}
+                  />
+                );
+              })}
 
-              {/* Rain chance pill */}
-              <div
-                className={`mt-2 w-full py-1 px-1.5 rounded-lg flex items-center justify-center gap-1 text-[11px] font-bold ${
-                  isNow
-                    ? item.rainProb > 0
-                      ? 'bg-white/20 text-white'
-                      : 'text-white/70'
-                    : item.rainProb > 0
-                    ? 'bg-blue-100 text-blue-800'
-                    : 'text-slate-400'
-                }`}
-              >
-                <Droplet className="w-3 h-3 shrink-0" />
-                <span>{item.rainProb}%</span>
-              </div>
-            </div>
-          );
-        })}
+              {/* Nodes and Temperature Labels */}
+              {points.map((pt) => {
+                const isNow = pt.index === 0;
+                const isHovered = hoveredIdx === pt.index;
+                const isMax = pt.temp === maxTemp;
+                const isMin = pt.temp === minTemp;
+
+                return (
+                  <g key={`node-${pt.index}`}>
+                    {/* Temperature value text floating right above the node */}
+                    <text
+                      x={pt.x}
+                      y={pt.y - 12}
+                      textAnchor="middle"
+                      className={`font-black tracking-tight select-none ${
+                        isNow
+                          ? 'fill-blue-600 dark:fill-blue-400 font-extrabold text-[15px]'
+                          : isMax
+                          ? 'fill-amber-600 dark:fill-amber-400 font-extrabold text-[15px]'
+                          : isMin
+                          ? 'fill-blue-500 dark:fill-blue-300 font-bold text-[14px]'
+                          : isHovered
+                          ? 'fill-blue-600 dark:fill-blue-400 text-[15px]'
+                          : 'fill-slate-800 dark:fill-slate-100 text-[14px]'
+                      }`}
+                    >
+                      {pt.temp}°
+                    </text>
+
+                    {/* Timeline Node point on the curve */}
+                    {isNow ? (
+                      <g>
+                        {/* Outer pulse wave */}
+                        <circle
+                          cx={pt.x}
+                          cy={pt.y}
+                          r="10"
+                          className="fill-blue-400/40 animate-pulse"
+                        />
+                        {/* Central current node */}
+                        <circle
+                          cx={pt.x}
+                          cy={pt.y}
+                          r="5.5"
+                          className="fill-blue-600 stroke-2 stroke-white dark:stroke-slate-900 shadow-sm"
+                        />
+                      </g>
+                    ) : (
+                      <circle
+                        cx={pt.x}
+                        cy={pt.y}
+                        r={isHovered ? '5.5' : '4'}
+                        fill={isHovered ? '#2563eb' : pt.thermal.dotColor}
+                        className="stroke-2 stroke-white dark:stroke-slate-900 transition-all shadow-xs"
+                      />
+                    )}
+                  </g>
+                );
+              })}
+            </svg>
+          </div>
+
+          {/* 2. BOTTOM PART: Aligned columns for weather condition, wind, and hour */}
+          <div className="flex w-full">
+            {hourly.map((item, index) => {
+              const isNow = index === 0;
+              const isHovered = hoveredIdx === index;
+
+              return (
+                <div
+                  key={item.time || index}
+                  style={{ width: `${COL_WIDTH}px` }}
+                  onMouseEnter={() => setHoveredIdx(index)}
+                  onMouseLeave={() => setHoveredIdx(null)}
+                  className={`flex-none flex flex-col items-center justify-between text-center py-2 px-1 transition-all rounded-xl cursor-pointer ${
+                    isHovered
+                      ? 'bg-blue-50/70 dark:bg-blue-950/40'
+                      : ''
+                  }`}
+                >
+                  {/* Weather condition icon */}
+                  <div className="flex flex-col items-center justify-center my-1">
+                    <div
+                      className={`p-1.5 rounded-xl transition-transform ${
+                        isNow
+                          ? 'bg-blue-100/90 dark:bg-blue-950/80 shadow-2xs scale-105'
+                          : isHovered
+                          ? 'scale-110'
+                          : ''
+                      }`}
+                    >
+                      <WeatherIcon
+                        name={item.condition.icon}
+                        className={`w-5 h-5 sm:w-6 sm:h-6 ${item.condition.color}`}
+                      />
+                    </div>
+
+                    {/* Rain probability if > 0 */}
+                    {item.rainProb > 0 ? (
+                      <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-blue-600 dark:text-blue-400 mt-1">
+                        <Droplets className="w-2.5 h-2.5" />
+                        {item.rainProb}%
+                      </span>
+                    ) : (
+                      <span className="h-3.5 block mt-1" />
+                    )}
+                  </div>
+
+                  {/* Wind speed */}
+                  <div className="flex items-center justify-center gap-0.5 text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-2">
+                    <Wind className="w-2.5 h-2.5 shrink-0 opacity-70 text-slate-400" />
+                    <span className="truncate">{item.windSpeed} km/h</span>
+                  </div>
+
+                  {/* Hour badge / label at the bottom */}
+                  <div className="w-full pt-1.5 border-t border-slate-200/70 dark:border-slate-800/80">
+                    <span
+                      className={`text-[11px] font-extrabold tracking-tight px-1.5 py-0.5 rounded-md inline-block ${
+                        isNow
+                          ? 'bg-blue-600 text-white shadow-2xs'
+                          : isHovered
+                          ? 'text-blue-600 dark:text-blue-400 font-black'
+                          : 'text-slate-600 dark:text-slate-400'
+                      }`}
+                    >
+                      {isNow ? 'Agora' : item.hour}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );
