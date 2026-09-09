@@ -13,7 +13,6 @@ import {
 import { BRAZIL_CAPITALS } from './data/brazilCities';
 import { Header } from './components/Header';
 import { FavoritesBar } from './components/FavoritesBar';
-import { CapitalChips } from './components/CapitalChips';
 import { TabNavigation } from './components/TabNavigation';
 import { CurrentWeatherCard } from './components/CurrentWeatherCard';
 import { HourlyForecast } from './components/HourlyForecast';
@@ -218,7 +217,7 @@ export default function App() {
         console.warn('IP fallback failed:', err);
       }
       setGpsNotification(
-        'Não foi possível obter a localização GPS. Você pode escolher sua cidade na lista suspensa ou no campo de busca.'
+        'Não foi possível obter a localização GPS. Você pode digitar e escolher sua cidade no campo de busca acima.'
       );
       setTimeout(() => setGpsNotification(null), 5000);
     };
@@ -359,20 +358,14 @@ export default function App() {
         {/* PWA Mobile Shortcut / Install Banner */}
         <PWAInstallBanner />
 
-        {/* Cidades Favoritas com Lista Suspensa Discreta de Capitais ao lado */}
-        <div className="w-full flex items-center justify-between gap-2.5 overflow-x-auto no-scrollbar py-0.5" id="favorites-capitals-container">
-          <div className="flex-1 min-w-0">
-            <FavoritesBar
-              currentLocation={selectedLocation}
-              favorites={favorites}
-              onSelectCity={handleSelectCity}
-              onRemoveFavorite={handleRemoveFavorite}
-              onAddFavorite={handleToggleFavorite}
-            />
-          </div>
-          <CapitalChips
+        {/* Cidades Favoritas */}
+        <div className="w-full overflow-x-auto no-scrollbar py-0.5" id="favorites-bar-container">
+          <FavoritesBar
             currentLocation={selectedLocation}
+            favorites={favorites}
             onSelectCity={handleSelectCity}
+            onRemoveFavorite={handleRemoveFavorite}
+            onAddFavorite={handleToggleFavorite}
           />
         </div>
 

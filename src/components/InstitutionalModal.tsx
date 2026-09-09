@@ -241,7 +241,7 @@ export const InstitutionalModal: React.FC<InstitutionalModalProps> = ({
               <section className="space-y-2">
                 <h4 className="font-bold text-slate-900 text-base">5. Direitos do Titular (LGPD)</h4>
                 <p>
-                  Você tem o direito de solicitar confirmação da existência de tratamento, acesso aos dados, correção de informações e eliminação de dados de acordo com a LGPD. Para qualquer solicitação, entre em contato através do e-mail oficial: <a href="mailto:contatodanielabrito@gmail.com" className="text-blue-600 font-bold underline">contatodanielabrito@gmail.com</a>.
+                  Você tem o direito de solicitar confirmação da existência de tratamento, acesso aos dados, correção de informações e eliminação de dados de acordo com a LGPD. Para qualquer solicitação, entre em contato através do e-mail oficial: <a href="mailto:previsaodotempoagora.oficial@gmail.com" className="text-blue-600 font-bold underline">previsaodotempoagora.oficial@gmail.com</a>.
                 </p>
               </section>
             </div>
@@ -481,10 +481,10 @@ export const InstitutionalModal: React.FC<InstitutionalModalProps> = ({
                       E-mail Direto do Suporte
                     </span>
                     <a
-                      href="mailto:contatodanielabrito@gmail.com"
+                      href="mailto:previsaodotempoagora.oficial@gmail.com"
                       className="text-sm font-bold text-blue-600 hover:underline block break-all"
                     >
-                      contatodanielabrito@gmail.com
+                      previsaodotempoagora.oficial@gmail.com
                     </a>
                     <p className="text-xs text-slate-500">
                       Atendimento rápido para usuários, imprensa e suporte geral.

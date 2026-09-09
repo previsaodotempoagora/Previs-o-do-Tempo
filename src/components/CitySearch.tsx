@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Search, MapPin, X, Loader2, Navigation, Star, History } from 'lucide-react';
 import { LocationData } from '../types';
 import { searchCities } from '../services/weatherApi';
-import { BRAZIL_CAPITALS } from '../data/brazilCities';
 
 interface CitySearchProps {
   currentLocation: LocationData;
@@ -27,6 +26,8 @@ export const CitySearch: React.FC<CitySearchProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [recentSearches, setRecentSearches] = useState<LocationData[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const wasOpenOnMouseDown = useRef(false);
 
   useEffect(() => {
     try {
@@ -82,6 +83,43 @@ export const CitySearch: React.FC<CitySearchProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Escape key closes search
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape' && isOpen) {
+        setIsOpen(false);
+        inputRef.current?.blur();
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
+
+  const handleMouseDown = () => {
+    // Record if it was already open before this mouse click
+    wasOpenOnMouseDown.current = isOpen;
+  };
+
+  const handleInputClick = () => {
+    // If it was already open before clicking, this second click closes it!
+    if (wasOpenOnMouseDown.current) {
+      setIsOpen(false);
+      inputRef.current?.blur();
+    } else {
+      setIsOpen(true);
+    }
+  };
+
+  const handleToggleSearch = () => {
+    if (isOpen) {
+      setIsOpen(false);
+      inputRef.current?.blur();
+    } else {
+      setIsOpen(true);
+      inputRef.current?.focus();
+    }
+  };
+
   const handleSelect = (city: LocationData) => {
     saveRecentSearch(city);
     onSelectCity(city);
@@ -98,16 +136,24 @@ export const CitySearch: React.FC<CitySearchProps> = ({
   return (
     <div ref={containerRef} className="relative w-full" id="city-search-box">
       <div className="flex items-center gap-2">
-        {/* Search input field */}
+        {/* Search input field with 2nd click toggle */}
         <div className="relative flex-1">
-          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
+          <button
+            type="button"
+            id="toggle-search-icon-btn"
+            onClick={handleToggleSearch}
+            title={isOpen ? 'Fechar pesquisa' : 'Abrir pesquisa'}
+            className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors z-10 cursor-pointer"
+          >
             {isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin text-blue-600 dark:text-blue-400" />
             ) : (
               <Search className="w-4 h-4" />
             )}
-          </div>
+          </button>
+
           <input
+            ref={inputRef}
             id="city-search-input"
             type="text"
             value={query}
@@ -115,22 +161,40 @@ export const CitySearch: React.FC<CitySearchProps> = ({
               setQuery(e.target.value);
               setIsOpen(true);
             }}
-            onFocus={() => setIsOpen(true)}
+            onMouseDown={handleMouseDown}
+            onClick={handleInputClick}
             placeholder="Buscar qualquer cidade do Brasil..."
             className="w-full pl-10 pr-10 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 shadow-2xs transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 dark:focus:border-blue-400 focus:bg-white dark:focus:bg-slate-800"
           />
-          {query && (
+
+          {query ? (
             <button
               id="clear-search-btn"
+              type="button"
               onClick={() => {
                 setQuery('');
                 setResults([]);
+                inputRef.current?.focus();
               }}
-              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              title="Limpar busca"
+              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 z-10 cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
-          )}
+          ) : isOpen ? (
+            <button
+              id="close-search-btn"
+              type="button"
+              onClick={() => {
+                setIsOpen(false);
+                inputRef.current?.blur();
+              }}
+              title="Fechar pesquisa"
+              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors z-10 cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          ) : null}
         </div>
 
         {/* GPS location button */}
@@ -139,7 +203,7 @@ export const CitySearch: React.FC<CitySearchProps> = ({
           onClick={onUseGps}
           disabled={isGpsLoading}
           title="Detectar minha localização atual via GPS ou Provedor"
-          className="flex items-center gap-1.5 px-3 sm:px-3.5 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-750 active:scale-95 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 shadow-2xs hover:text-blue-600 dark:hover:text-blue-400 transition-all whitespace-nowrap"
+          className="flex items-center gap-1.5 px-3 sm:px-3.5 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-750 active:scale-95 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 shadow-2xs hover:text-blue-600 dark:hover:text-blue-400 transition-all whitespace-nowrap cursor-pointer"
         >
           {isGpsLoading ? (
             <Loader2 className="w-4 h-4 animate-spin text-blue-600 dark:text-blue-400" />
@@ -154,7 +218,7 @@ export const CitySearch: React.FC<CitySearchProps> = ({
           id="toggle-favorite-btn"
           onClick={() => onToggleFavorite(currentLocation)}
           title={isCurrentFavorite ? 'Remover dos favoritos' : 'Salvar cidade nos favoritos'}
-          className={`p-2.5 border rounded-xl shadow-2xs transition-all active:scale-95 ${
+          className={`p-2.5 border rounded-xl shadow-2xs transition-all active:scale-95 cursor-pointer ${
             isCurrentFavorite
               ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700 text-amber-500 hover:bg-amber-100'
               : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 hover:text-amber-500 hover:bg-slate-50 dark:hover:bg-slate-700'
@@ -170,18 +234,30 @@ export const CitySearch: React.FC<CitySearchProps> = ({
           id="search-dropdown-results"
           className="absolute z-50 left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl overflow-hidden max-h-[380px] overflow-y-auto custom-scrollbar animate-in fade-in slide-in-from-top-2 duration-150"
         >
+          {/* Quick bar with Close button */}
+          <div className="flex items-center justify-between px-3.5 py-1.5 bg-slate-50 dark:bg-slate-800/80 border-b border-slate-100 dark:border-slate-800 text-[11px] text-slate-400">
+            <span className="font-medium">{query ? `Resultados (${results.length})` : 'Pesquisa de Cidades'}</span>
+            <button
+              type="button"
+              onClick={() => {
+                setIsOpen(false);
+                inputRef.current?.blur();
+              }}
+              className="text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 font-semibold cursor-pointer"
+            >
+              Fechar (Esc)
+            </button>
+          </div>
+
           {query.trim().length > 0 ? (
             <div>
-              <div className="px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800/80 border-b border-slate-100 dark:border-slate-800">
-                Resultados da busca ({results.length})
-              </div>
               {results.length > 0 ? (
                 <div className="divide-y divide-slate-100 dark:divide-slate-800">
                   {results.map((city) => (
                     <button
                       key={city.id || `${city.lat}-${city.lon}`}
                       onClick={() => handleSelect(city)}
-                      className="w-full px-4 py-3 text-left flex items-center justify-between hover:bg-blue-50/70 dark:hover:bg-slate-800 transition-colors group"
+                      className="w-full px-4 py-3 text-left flex items-center justify-between hover:bg-blue-50/70 dark:hover:bg-slate-800 transition-colors group cursor-pointer"
                     >
                       <div className="flex items-center gap-3">
                         <MapPin className="w-4 h-4 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors shrink-0" />
@@ -260,7 +336,7 @@ export const CitySearch: React.FC<CitySearchProps> = ({
                       <button
                         key={rec.id}
                         onClick={() => handleSelect(rec)}
-                        className="w-full px-3 py-2 text-left text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors flex items-center justify-between"
+                        className="w-full px-3 py-2 text-left text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors flex items-center justify-between cursor-pointer"
                       >
                         <span className="font-medium">{rec.name}</span>
                         <span className="text-[11px] text-slate-400">{rec.stateCode || rec.state}</span>
@@ -270,24 +346,18 @@ export const CitySearch: React.FC<CitySearchProps> = ({
                 </div>
               )}
 
-              {/* Top Capitals */}
-              <div>
-                <div className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                  Capitais em Destaque
+              {/* If no favorites and no recent searches */}
+              {favorites.length === 0 && recentSearches.length === 0 && (
+                <div className="py-6 px-4 text-center">
+                  <Search className="w-6 h-6 mx-auto text-slate-300 dark:text-slate-600 mb-2" />
+                  <p className="text-xs font-semibold text-slate-700 dark:text-slate-200">
+                    Digite o nome de qualquer cidade ou estado
+                  </p>
+                  <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">
+                    Ex: Campinas, Niterói, Uberlândia, Caxias do Sul, Londrina...
+                  </p>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 mt-1">
-                  {BRAZIL_CAPITALS.slice(0, 9).map((cap) => (
-                    <button
-                      key={cap.id}
-                      onClick={() => handleSelect(cap)}
-                      className="px-3 py-2 text-left text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-800 dark:hover:text-blue-300 rounded-xl transition-colors flex items-center justify-between"
-                    >
-                      <span className="truncate">{cap.name}</span>
-                      <span className="text-[10px] font-bold text-slate-400 ml-1">{cap.stateCode}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
+              )}
             </div>
           )}
         </div>
