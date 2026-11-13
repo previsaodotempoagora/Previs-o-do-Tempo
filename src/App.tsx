@@ -10,7 +10,7 @@ import {
   getCityFromCoordinates,
   getApproximateLocationByIp
 } from './services/weatherApi';
-import { BRAZIL_CAPITALS } from './data/brazilCities';
+import { ALL_PRESET_CITIES, BRAZIL_CAPITALS } from './data/brazilCities';
 import { Header } from './components/Header';
 import { FavoritesBar } from './components/FavoritesBar';
 import { TabNavigation } from './components/TabNavigation';
@@ -44,6 +44,16 @@ const DEFAULT_CITY = BRAZIL_CAPITALS[0]; // São Paulo, SP
 export default function App() {
   const [selectedLocation, setSelectedLocation] = useState<LocationData>(() => {
     try {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const cityParam = params.get('cidade');
+        if (cityParam) {
+          const matchedCity = ALL_PRESET_CITIES.find((c) => c.id === cityParam);
+          if (matchedCity) {
+            return matchedCity;
+          }
+        }
+      }
       const saved = localStorage.getItem('previsao_tempo_last_city');
       if (saved) {
         const parsed = JSON.parse(saved);
@@ -194,6 +204,30 @@ export default function App() {
   useEffect(() => {
     loadWeather(selectedLocation);
   }, [selectedLocation, loadWeather]);
+
+  // Sync dynamic page title and canonical URL for SEO / Search Console
+  useEffect(() => {
+    if (typeof document === 'undefined' || typeof window === 'undefined') return;
+    const citySuffix = selectedLocation.stateCode
+      ? `${selectedLocation.name}, ${selectedLocation.stateCode}`
+      : selectedLocation.name;
+    document.title = `Previsão do Tempo em ${citySuffix} - Hoje, 7 e 15 Dias | Previsão do Tempo Agora`;
+
+    const isPresetCity = ALL_PRESET_CITIES.some((c) => c.id === selectedLocation.id);
+    const params = new URLSearchParams(window.location.search);
+    const canonicalUrl =
+      params.get('cidade') === selectedLocation.id && isPresetCity
+        ? `${window.location.origin}/?cidade=${selectedLocation.id}`
+        : `${window.location.origin}${window.location.pathname}`;
+
+    let canonicalEl = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    if (!canonicalEl) {
+      canonicalEl = document.createElement('link');
+      canonicalEl.rel = 'canonical';
+      document.head.appendChild(canonicalEl);
+    }
+    canonicalEl.href = canonicalUrl;
+  }, [selectedLocation]);
 
   const handleSelectCity = (location: LocationData) => {
     setSelectedLocation(location);

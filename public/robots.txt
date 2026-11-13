@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://www.previsaodotempoagora.com.br/sitemap.xml

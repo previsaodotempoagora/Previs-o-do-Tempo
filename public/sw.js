@@ -45,13 +45,15 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Bypass live dynamic weather & geocoding endpoints so they are always fresh
+  // Bypass live dynamic weather, geocoding, and crawler SEO files so they are always fresh
   if (
     request.url.includes('open-meteo.com') ||
     request.url.includes('nominatim.openstreetmap.org') ||
     request.url.includes('photon.komoot.io') ||
     request.url.includes('google') ||
-    request.url.includes('doubleclick')
+    request.url.includes('doubleclick') ||
+    request.url.endsWith('/sitemap.xml') ||
+    request.url.endsWith('/robots.txt')
   ) {
     return;
   }
