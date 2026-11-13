@@ -1,5 +1,5 @@
 // Service Worker para PWA Previsão do Tempo Agora
-const CACHE_NAME = 'previsao-tempo-v2';
+const CACHE_NAME = 'previsao-tempo-v3';
 
 const STATIC_PRECACHE = [
   '/',
@@ -8,7 +8,8 @@ const STATIC_PRECACHE = [
   '/manifest.webmanifest',
   '/apple-touch-icon.png',
   '/pwa-192x192.png',
-  '/pwa-512x512.png'
+  '/pwa-512x512.png',
+  '/pwa-maskable-512x512.png'
 ];
 
 self.addEventListener('install', (event) => {
