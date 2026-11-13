@@ -52,22 +52,22 @@ export const WeatherFaqSection: React.FC = () => {
   };
 
   return (
-    <section className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm p-5 sm:p-7 space-y-5 transition-colors" id="weather-faq-section">
-      <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100 dark:border-slate-800">
-        <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/60 shadow-2xs">
+    <section className="bg-white dark:bg-plum-900 rounded-3xl border border-stone-200/90 dark:border-plum-800 shadow-sm p-5 sm:p-7 space-y-5 transition-colors" id="weather-faq-section">
+      <div className="flex items-center gap-2.5 pb-3 border-b border-stone-100 dark:border-plum-800">
+        <div className="p-2 rounded-xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 border border-brand-100 dark:border-brand-900/60 shadow-2xs">
           <HelpCircle className="w-5 h-5" />
         </div>
         <div>
-          <h2 className="font-extrabold text-base sm:text-lg text-slate-900 dark:text-white tracking-tight">
+          <h2 className="font-extrabold text-base sm:text-lg text-stone-900 dark:text-white tracking-tight">
             Perguntas Frequentes sobre a Previsão do Tempo
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+          <p className="text-xs text-stone-500 dark:text-stone-400 font-medium mt-0.5">
             Tire suas dúvidas sobre modelos meteorológicos, acurácia e funcionamento do portal
           </p>
         </div>
       </div>
 
-      <div className="divide-y divide-slate-100 dark:divide-slate-800">
+      <div className="divide-y divide-stone-100 dark:divide-plum-800">
         {FAQ_ITEMS.map((item, idx) => {
           const isOpen = openIndex === idx;
           return (
@@ -78,14 +78,14 @@ export const WeatherFaqSection: React.FC = () => {
                 aria-expanded={isOpen}
               >
                 <span className={`text-xs sm:text-sm font-bold transition-colors ${
-                  isOpen ? 'text-blue-600 dark:text-blue-400' : 'text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400'
+                  isOpen ? 'text-brand-600 dark:text-brand-400' : 'text-stone-800 dark:text-stone-200 group-hover:text-brand-600 dark:group-hover:text-brand-400'
                 }`}>
                   {item.question}
                 </span>
                 <div className={`p-1.5 rounded-lg border transition-all shrink-0 ${
                   isOpen
-                    ? 'bg-blue-50 dark:bg-blue-950/60 border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 rotate-180'
-                    : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200'
+                    ? 'bg-brand-50 dark:bg-brand-950/60 border-brand-200 dark:border-brand-800 text-brand-600 dark:text-brand-400 rotate-180'
+                    : 'bg-stone-50 dark:bg-plum-850 border-stone-200 dark:border-plum-800 text-stone-400 dark:text-stone-400 group-hover:text-stone-700 dark:group-hover:text-stone-200'
                 }`}>
                   <ChevronDown className="w-4 h-4" />
                 </div>
@@ -93,7 +93,7 @@ export const WeatherFaqSection: React.FC = () => {
 
               {isOpen && (
                 <div className="pt-2.5 pr-6 animate-in fade-in duration-150">
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 leading-relaxed">
                     {item.answer}
                   </p>
                 </div>

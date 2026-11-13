@@ -31,7 +31,7 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onChang
 
   return (
     <div
-      className="w-full bg-slate-100 dark:bg-slate-800/80 p-1.5 rounded-2xl flex items-center justify-between gap-1.5 border border-slate-200 dark:border-slate-700 transition-colors"
+      className="w-full bg-stone-100 dark:bg-plum-850 p-1.5 rounded-2xl flex items-center justify-between gap-1.5 border border-stone-200/90 dark:border-plum-800 transition-colors"
       id="forecast-tab-navigation"
     >
       {tabs.map((tab) => {
@@ -43,13 +43,13 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onChang
             onClick={() => onChangeTab(tab.id)}
             className={`relative flex-1 py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer ${
               isActive
-                ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-sm border border-slate-200 dark:border-slate-700'
-                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-700/60'
+                ? 'bg-white dark:bg-plum-900 text-brand-600 dark:text-brand-300 shadow-sm border border-brand-200/70 dark:border-brand-800/50'
+                : 'text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white hover:bg-white/70 dark:hover:bg-plum-800/60'
             }`}
           >
             <span
               className={
-                isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'
+                isActive ? 'text-brand-600 dark:text-brand-400' : 'text-stone-400 dark:text-stone-500'
               }
             >
               {tab.icon}
@@ -59,8 +59,8 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onChang
               <span
                 className={`hidden md:inline-block text-[10px] font-bold px-2 py-0.5 rounded-full ${
                   isActive
-                    ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
-                    : 'bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
+                    ? 'bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300'
+                    : 'bg-stone-200/80 dark:bg-plum-800 text-stone-600 dark:text-stone-300'
                 }`}
               >
                 {tab.badge}

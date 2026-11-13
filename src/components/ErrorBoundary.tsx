@@ -46,17 +46,17 @@ export class ErrorBoundary extends React.Component<Props, State> {
   public override render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center p-4">
-          <div className="max-w-md w-full bg-slate-800 border border-slate-700 rounded-3xl p-6 text-center space-y-4 shadow-2xl">
-            <div className="w-12 h-12 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto">
+        <div className="min-h-screen bg-plum-950 text-stone-100 flex items-center justify-center p-4">
+          <div className="max-w-md w-full bg-plum-900 border border-plum-800 rounded-3xl p-6 text-center space-y-4 shadow-2xl">
+            <div className="w-12 h-12 rounded-2xl bg-brand-500/20 text-brand-300 flex items-center justify-center mx-auto">
               <AlertCircle className="w-6 h-6" />
             </div>
 
             <div>
-              <h1 className="text-xl font-black text-white tracking-tight">
+              <h1 className="text-xl font-black text-stone-100 tracking-tight">
                 Previsão do Tempo Agora
               </h1>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-stone-400 mt-1">
                 Ocorreu uma instabilidade ao inicializar o aplicativo.
               </p>
             </div>
@@ -64,7 +64,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
             <div className="flex flex-col gap-2 pt-2">
               <button
                 onClick={this.handleReload}
-                className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition-all inline-flex items-center justify-center gap-2 cursor-pointer shadow-md"
+                className="w-full py-2.5 px-4 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold transition-all inline-flex items-center justify-center gap-2 cursor-pointer shadow-md"
               >
                 <RefreshCw className="w-4 h-4" />
                 Recarregar Aplicativo
@@ -72,9 +72,9 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
               <button
                 onClick={this.handleResetAndReload}
-                className="w-full py-2 px-4 bg-slate-700/60 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium transition-all inline-flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-2 px-4 bg-plum-800/70 hover:bg-plum-800 text-stone-300 rounded-xl text-xs font-medium transition-all inline-flex items-center justify-center gap-2 cursor-pointer"
               >
-                <Trash2 className="w-3.5 h-3.5 text-slate-400" />
+                <Trash2 className="w-3.5 h-3.5 text-stone-400" />
                 Limpar Dados e Reiniciar
               </button>
             </div>

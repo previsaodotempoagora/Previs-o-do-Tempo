@@ -322,7 +322,7 @@ export default function App() {
   const todayDaily = weatherData?.daily?.[0];
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col selection:bg-blue-600 selection:text-white font-sans transition-colors">
+    <div className="min-h-screen bg-[#FAF7F5] dark:bg-plum-950 text-stone-900 dark:text-stone-100 flex flex-col selection:bg-brand-600 selection:text-white font-sans transition-colors">
       {/* Top Header with City Search, Dark Mode Switch & Exact Favicon Brand */}
       <Header
         currentLocation={selectedLocation}
@@ -344,11 +344,11 @@ export default function App() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-5 space-y-3.5 sm:space-y-4">
         {/* GPS Notification Toast if triggered */}
         {gpsNotification && (
-          <div className="p-3 bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 rounded-2xl text-xs font-semibold text-blue-800 dark:text-blue-200 flex items-center justify-between shadow-xs animate-in fade-in">
+          <div className="p-3 bg-brand-50 dark:bg-brand-950/60 border border-brand-200 dark:border-brand-800 rounded-2xl text-xs font-semibold text-brand-800 dark:text-brand-200 flex items-center justify-between shadow-xs animate-in fade-in">
             <span>{gpsNotification}</span>
             <button
               onClick={() => setGpsNotification(null)}
-              className="text-blue-500 hover:text-blue-700 ml-2 font-bold cursor-pointer"
+              className="text-brand-500 hover:text-brand-700 dark:hover:text-brand-300 ml-2 font-bold cursor-pointer"
             >
               ✕
             </button>
@@ -377,12 +377,12 @@ export default function App() {
 
         {/* Loading State */}
         {isLoading && !weatherData ? (
-          <div className="py-20 flex flex-col items-center justify-center text-center space-y-3 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 shadow-xs">
-            <Loader2 className="w-8 h-8 text-blue-600 dark:text-blue-400 animate-spin" />
-            <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
+          <div className="py-20 flex flex-col items-center justify-center text-center space-y-3 bg-white dark:bg-plum-900 rounded-3xl border border-stone-200/90 dark:border-plum-800 p-8 shadow-xs">
+            <Loader2 className="w-8 h-8 text-brand-600 dark:text-brand-400 animate-spin" />
+            <p className="text-sm font-bold text-stone-700 dark:text-stone-200">
               Obtendo dados meteorológicos em tempo real para {selectedLocation.name}...
             </p>
-            <span className="text-xs text-slate-400 dark:text-slate-500">
+            <span className="text-xs text-stone-400 dark:text-stone-500">
               Conectando com modelos de alta resolução para o Brasil
             </span>
           </div>
@@ -395,7 +395,7 @@ export default function App() {
             <p className="text-xs text-rose-700 dark:text-rose-300 max-w-md mx-auto">{error}</p>
             <button
               onClick={() => loadWeather(selectedLocation)}
-              className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs active:scale-95 inline-flex items-center gap-2 cursor-pointer"
+              className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs active:scale-95 inline-flex items-center gap-2 cursor-pointer"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               Tentar Novamente
@@ -406,7 +406,7 @@ export default function App() {
             {/* VIEW 1: HOJE */}
             {activeTab === 'today' && (
               <div className="space-y-4 animate-in fade-in duration-200">
-                {/* 1. Previsão do Dia (Card com fundo dinâmico de clima e Xiaomi noite) */}
+                {/* 1. Previsão do Dia */}
                 <CurrentWeatherCard
                   location={selectedLocation}
                   current={weatherData.current}
@@ -415,27 +415,27 @@ export default function App() {
                   onToggleFavorite={handleToggleFavorite}
                 />
 
-                {/* 2. Previsão Hora a Hora (Linha única: temperatura em cima, e abaixo: ícone, vento e hora) */}
+                {/* 2. Previsão Hora a Hora */}
                 <HourlyForecast hourly={weatherData.hourly} />
 
-                {/* 3. Anúncio Mobile / Desktop: imediatamente após previsão do dia e do hora a hora */}
+                {/* 3. Anúncio Mobile / Desktop */}
                 <AdSenseSlot slotId="today-after-hourly" format="auto" className="my-2" />
 
-                {/* 4. Detalhes de Hoje (UV, Umidade, Vento, Pressão, Nascer/Pôr do sol) */}
+                {/* 4. Detalhes de Hoje */}
                 <WeatherDetailsGrid
                   current={weatherData.current}
                   todayDaily={todayDaily}
                 />
 
                 {/* 5. Resumo dos Próximos 7 Dias */}
-                <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm p-4 sm:p-5 transition-colors">
+                <div className="bg-white dark:bg-plum-900 rounded-3xl border border-stone-200/90 dark:border-plum-800 shadow-sm p-4 sm:p-5 transition-colors">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-black text-sm sm:text-base text-slate-900 dark:text-white tracking-tight">
+                    <h3 className="font-black text-sm sm:text-base text-stone-900 dark:text-white tracking-tight">
                       Resumo da Semana
                     </h3>
                     <button
                       onClick={() => setActiveTab('7days')}
-                      className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+                      className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline cursor-pointer"
                     >
                       Ver visão 7 dias →
                     </button>
@@ -518,41 +518,40 @@ export default function App() {
       </main>
 
       {/* Institutional Footer */}
-      <footer className="w-full bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 pt-8 pb-7 mt-10 transition-colors">
+      <footer className="w-full bg-white dark:bg-plum-900 border-t border-stone-200/90 dark:border-plum-800 pt-8 pb-7 mt-10 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Col 1: Brand & Mission */}
             <div className="space-y-2.5">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl overflow-hidden shadow-xs shrink-0 bg-blue-600 flex items-center justify-center p-0.5">
+                <div className="w-8 h-8 rounded-xl overflow-hidden shadow-xs shrink-0 bg-brand-600 flex items-center justify-center p-0.5">
                   <img src="/favicon.svg" alt="App Icon" className="w-full h-full object-contain" />
                 </div>
-                <span className="font-black text-sm sm:text-base text-slate-900 dark:text-white tracking-tight">
-                  PREVISÃO DO TEMPO <span className="text-blue-600 dark:text-blue-400">AGORA</span>
+                <span className="font-black text-sm sm:text-base text-stone-900 dark:text-white tracking-tight">
+                  PREVISÃO DO TEMPO <span className="text-brand-600 dark:text-brand-400">AGORA</span>
                 </span>
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed">
                 Portal de informações meteorológicas em tempo real para todo o Brasil. Dados de alta acurácia com modelos ECMWF, GFS e WMO.
               </p>
-              <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-400 pt-1">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <div className="flex items-center gap-2 text-xs font-semibold text-stone-600 dark:text-stone-400 pt-1">
                 <span>Servidor e dados 100% operacionais</span>
               </div>
             </div>
 
             {/* Col 2: Previsões e Navegação */}
             <div className="space-y-2.5 text-xs">
-              <h4 className="font-extrabold text-slate-900 dark:text-white uppercase tracking-wider text-[11px]">
+              <h4 className="font-extrabold text-stone-900 dark:text-white uppercase tracking-wider text-[11px]">
                 Navegação Rápida
               </h4>
-              <ul className="space-y-1.5 text-slate-600 dark:text-slate-400">
+              <ul className="space-y-1.5 text-stone-600 dark:text-stone-400">
                 <li>
                   <button
                     onClick={() => {
                       setActiveTab('today');
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
-                    className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-left cursor-pointer"
+                    className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors text-left cursor-pointer"
                   >
                     Clima Hoje em Tempo Real
                   </button>
@@ -563,7 +562,7 @@ export default function App() {
                       setActiveTab('7days');
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
-                    className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-left cursor-pointer"
+                    className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors text-left cursor-pointer"
                   >
                     Previsão dos Próximos 7 Dias
                   </button>
@@ -574,7 +573,7 @@ export default function App() {
                       setActiveTab('15days');
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
-                    className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-left cursor-pointer"
+                    className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors text-left cursor-pointer"
                   >
                     Tendência Estendida de 15 Dias
                   </button>
@@ -585,7 +584,7 @@ export default function App() {
                       const el = document.getElementById('brazil-regions-section');
                       el?.scrollIntoView({ behavior: 'smooth' });
                     }}
-                    className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-left cursor-pointer"
+                    className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors text-left cursor-pointer"
                   >
                     Capitais e Regiões do Brasil
                   </button>
@@ -595,41 +594,41 @@ export default function App() {
 
             {/* Col 3: Institucional & Conformidade AdSense / LGPD */}
             <div className="space-y-2.5 text-xs">
-              <h4 className="font-extrabold text-slate-900 dark:text-white uppercase tracking-wider text-[11px]">
+              <h4 className="font-extrabold text-stone-900 dark:text-white uppercase tracking-wider text-[11px]">
                 Institucional & LGPD
               </h4>
-              <ul className="space-y-1.5 text-slate-600 dark:text-slate-400">
+              <ul className="space-y-1.5 text-stone-600 dark:text-stone-400">
                 <li>
                   <button
                     onClick={() => openInstitutional('privacy')}
-                    className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-left flex items-center gap-1.5 cursor-pointer"
+                    className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors text-left flex items-center gap-1.5 cursor-pointer"
                   >
-                    <ShieldCheck className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                    <ShieldCheck className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
                     <span>Política de Privacidade (LGPD)</span>
                   </button>
                 </li>
                 <li>
                   <button
                     onClick={() => openInstitutional('terms')}
-                    className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-left flex items-center gap-1.5 cursor-pointer"
+                    className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors text-left flex items-center gap-1.5 cursor-pointer"
                   >
-                    <FileText className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                    <FileText className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
                     <span>Termos e Condições de Uso</span>
                   </button>
                 </li>
                 <li>
                   <button
                     onClick={() => openInstitutional('about')}
-                    className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-left flex items-center gap-1.5 cursor-pointer"
+                    className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors text-left flex items-center gap-1.5 cursor-pointer"
                   >
-                    <Info className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                    <Info className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
                     <span>Sobre Nós & Metodologia</span>
                   </button>
                 </li>
                 <li>
                   <button
                     onClick={() => openInstitutional('contact')}
-                    className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-left flex items-center gap-1.5 font-bold text-blue-600 dark:text-blue-400 cursor-pointer"
+                    className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors text-left flex items-center gap-1.5 font-bold text-brand-600 dark:text-brand-400 cursor-pointer"
                   >
                     <Mail className="w-3.5 h-3.5" />
                     <span>Fale Conosco / Suporte</span>
@@ -639,40 +638,40 @@ export default function App() {
             </div>
 
             {/* Col 4: Fontes & Responsabilidade */}
-            <div className="space-y-2.5 text-xs text-slate-500 dark:text-slate-400">
-              <h4 className="font-extrabold text-slate-900 dark:text-white uppercase tracking-wider text-[11px]">
+            <div className="space-y-2.5 text-xs text-stone-500 dark:text-stone-400">
+              <h4 className="font-extrabold text-stone-900 dark:text-white uppercase tracking-wider text-[11px]">
                 Fontes de Dados
               </h4>
               <p className="leading-relaxed">
                 Dados atmosféricos fornecidos via integração com Open-Meteo, Copernicus Climate Service, NOAA e Instituto Nacional de Meteorologia (INMET).
               </p>
               <div className="flex items-center gap-2 pt-1 text-[11px]">
-                <Globe className="w-3.5 h-3.5 text-slate-400" />
+                <Globe className="w-3.5 h-3.5 text-stone-400" />
                 <span>Cobertura nacional em todos os 5.570 municípios</span>
               </div>
             </div>
           </div>
 
-          <div className="pt-5 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400 dark:text-slate-500">
+          <div className="pt-5 border-t border-stone-100 dark:border-plum-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-stone-400 dark:text-stone-500">
             <p>© {new Date().getFullYear()} Previsão do Tempo Agora. Todos os direitos reservados.</p>
             <div className="flex items-center gap-4">
               <button
                 onClick={() => openInstitutional('privacy')}
-                className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
+                className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer"
               >
                 Privacidade
               </button>
               <span>•</span>
               <button
                 onClick={() => openInstitutional('terms')}
-                className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
+                className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer"
               >
                 Termos
               </button>
               <span>•</span>
               <button
                 onClick={() => openInstitutional('contact')}
-                className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
+                className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors cursor-pointer"
               >
                 Contato
               </button>

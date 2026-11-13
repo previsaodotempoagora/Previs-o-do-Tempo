@@ -36,16 +36,16 @@ export const BrazilRegionsOverview: React.FC<BrazilRegionsOverviewProps> = ({
   onSelectCity
 }) => {
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm p-4 sm:p-6 transition-colors" id="brazil-regions-section">
+    <div className="bg-white dark:bg-plum-900 rounded-3xl border border-stone-200/90 dark:border-plum-800 shadow-sm p-4 sm:p-6 transition-colors" id="brazil-regions-section">
       <div className="flex items-center gap-2.5 mb-4">
-        <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/60">
+        <div className="p-2 rounded-xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 border border-brand-100 dark:border-brand-900/60">
           <Map className="w-4 h-4" />
         </div>
         <div>
-          <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white tracking-tight">
+          <h3 className="font-extrabold text-sm sm:text-base text-stone-900 dark:text-white tracking-tight">
             Navegar por Regiões do Brasil
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+          <p className="text-xs text-stone-500 dark:text-stone-400 font-medium">
             Selecione uma capital para ver a previsão detalhada imediatamente
           </p>
         </div>
@@ -58,13 +58,13 @@ export const BrazilRegionsOverview: React.FC<BrazilRegionsOverviewProps> = ({
           return (
             <div
               key={region.name}
-              className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 flex flex-col justify-between"
+              className="p-3.5 rounded-2xl bg-stone-50 dark:bg-plum-850 border border-stone-200/90 dark:border-plum-800 flex flex-col justify-between"
             >
               <div className="flex items-center justify-between mb-2.5">
-                <span className="text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-200">
+                <span className="text-xs font-extrabold uppercase tracking-wider text-stone-700 dark:text-stone-200">
                   {region.name}
                 </span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-stone-200/80 dark:bg-plum-800 text-stone-600 dark:text-stone-300">
                   {regionCapitals.length} capitais
                 </span>
               </div>
@@ -80,12 +80,12 @@ export const BrazilRegionsOverview: React.FC<BrazilRegionsOverviewProps> = ({
                       onClick={() => onSelectCity(cap)}
                       className={`text-xs px-2.5 py-1 rounded-xl font-semibold transition-all active:scale-95 flex items-center gap-1 cursor-pointer ${
                         isSelected
-                          ? 'bg-blue-600 text-white shadow-xs'
-                          : 'bg-white dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-700 dark:hover:text-blue-300 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 shadow-xs'
+                          ? 'bg-brand-600 text-white shadow-xs'
+                          : 'bg-white dark:bg-plum-900 hover:bg-brand-50 dark:hover:bg-plum-800 hover:text-brand-700 dark:hover:text-brand-300 text-stone-700 dark:text-stone-200 border border-stone-200 dark:border-plum-800 shadow-xs'
                       }`}
                     >
                       <span>{cap.name}</span>
-                      <span className={`text-[10px] font-mono ${isSelected ? 'text-blue-200' : 'text-slate-400 dark:text-slate-400'}`}>
+                      <span className={`text-[10px] font-mono ${isSelected ? 'text-brand-200' : 'text-stone-400 dark:text-stone-400'}`}>
                         {cap.stateCode}
                       </span>
                     </button>

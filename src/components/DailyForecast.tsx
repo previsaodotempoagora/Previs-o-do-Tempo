@@ -49,7 +49,7 @@ export const DailyForecast: React.FC<DailyForecastProps> = ({
   return (
     <div className="space-y-3" id={`daily-forecast-container-${maxDaysToShow}`}>
       {/* Section Trigger Header (with Arrow button to open/close full forecast) */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">
+      <div className="bg-white dark:bg-plum-900 rounded-3xl border border-stone-200/90 dark:border-plum-800 shadow-sm overflow-hidden transition-colors">
         <button
           type="button"
           onClick={() => {
@@ -58,25 +58,25 @@ export const DailyForecast: React.FC<DailyForecastProps> = ({
             }
           }}
           className={`w-full p-4 sm:p-5 flex items-center justify-between gap-3 text-left transition-colors ${
-            collapsible ? 'hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer' : ''
+            collapsible ? 'hover:bg-brand-50/40 dark:hover:bg-plum-850 cursor-pointer' : ''
           }`}
         >
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/50 shadow-2xs">
+            <div className="p-2.5 rounded-2xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 border border-brand-100 dark:border-brand-900/50 shadow-2xs">
               <Calendar className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-black text-sm sm:text-base text-slate-900 dark:text-white tracking-tight">
+                <h3 className="font-black text-sm sm:text-base text-stone-900 dark:text-white tracking-tight">
                   {title} ({maxDaysToShow} Dias)
                 </h3>
                 {collapsible && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-100 dark:bg-brand-950 text-brand-700 dark:text-brand-300">
                     {isSectionOpen ? 'Expandido' : 'Clique para ver'}
                   </span>
                 )}
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+              <p className="text-xs text-stone-500 dark:text-stone-400 font-medium mt-0.5">
                 {collapsible && !isSectionOpen
                   ? 'Toque na seta para abrir a previsão completa dia a dia'
                   : 'Mínimas, máximas, probabilidade de chuva e vento'}
@@ -85,22 +85,22 @@ export const DailyForecast: React.FC<DailyForecastProps> = ({
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 text-xs font-bold">
+            <div className="hidden sm:flex items-center gap-2 text-xs font-bold tabular-nums">
               <span className="flex items-center gap-0.5 text-rose-600 dark:text-rose-400">
                 <ArrowUp className="w-3.5 h-3.5" /> Máx: {globalMax}°C
               </span>
-              <span className="text-slate-300 dark:text-slate-700">•</span>
-              <span className="flex items-center gap-0.5 text-blue-600 dark:text-blue-400">
+              <span className="text-stone-300 dark:text-plum-800">•</span>
+              <span className="flex items-center gap-0.5 text-indigo-600 dark:text-indigo-300">
                 <ArrowDown className="w-3.5 h-3.5" /> Mín: {globalMin}°C
               </span>
             </div>
 
             {collapsible && (
-              <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-2xs">
+              <div className="p-2 rounded-xl bg-stone-100 dark:bg-plum-850 text-stone-700 dark:text-stone-200 shadow-2xs">
                 {isSectionOpen ? (
-                  <ChevronUp className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  <ChevronUp className="w-5 h-5 text-brand-600 dark:text-brand-400" />
                 ) : (
-                  <ChevronDown className="w-5 h-5 text-slate-600 dark:text-slate-300" />
+                  <ChevronDown className="w-5 h-5 text-stone-600 dark:text-stone-300" />
                 )}
               </div>
             )}
@@ -109,7 +109,7 @@ export const DailyForecast: React.FC<DailyForecastProps> = ({
 
         {/* Days List Body (Open or Closed) */}
         {isSectionOpen && (
-          <div className="border-t border-slate-100 dark:border-slate-800 divide-y divide-slate-100 dark:divide-slate-800 animate-in fade-in duration-200">
+          <div className="border-t border-stone-100 dark:border-plum-800 divide-y divide-stone-100 dark:divide-plum-800 animate-in fade-in duration-200">
             {forecastDays.map((day, idx) => {
               const isExpanded = expandedDate === day.date;
               const uvInfo = getUVLevel(day.uvIndexMax);
@@ -126,47 +126,47 @@ export const DailyForecast: React.FC<DailyForecastProps> = ({
               return (
                 <div
                   key={day.date}
-                  className="transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/50"
+                  className="transition-colors hover:bg-brand-50/35 dark:hover:bg-plum-850/70"
                 >
                   <button
                     onClick={() => toggleExpand(day.date)}
-                    className="w-full p-3.5 sm:p-4 text-left flex items-center justify-between gap-2 sm:gap-4 transition-all"
+                    className="w-full p-3.5 sm:p-4 text-left flex items-center justify-between gap-2 sm:gap-4 transition-all cursor-pointer"
                   >
                     {/* Day label and date */}
                     <div className="w-24 sm:w-28 shrink-0">
-                      <div className="font-black text-xs sm:text-sm text-slate-900 dark:text-white flex items-center gap-1.5">
+                      <div className="font-black text-xs sm:text-sm text-stone-900 dark:text-white flex items-center gap-1.5">
                         <span>{day.dayOfWeek}</span>
                         {idx === 0 && (
-                          <span className="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300">
+                          <span className="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-brand-100 dark:bg-brand-950 text-brand-700 dark:text-brand-300">
                             Hoje
                           </span>
                         )}
                       </div>
-                      <span className="text-xs text-slate-400 dark:text-slate-500 font-medium">
+                      <span className="text-xs text-stone-400 dark:text-stone-500 font-medium tabular-nums">
                         {day.formattedDate}
                       </span>
                     </div>
 
                     {/* Weather Condition Icon & Text */}
                     <div className="flex items-center gap-2.5 min-w-0 flex-1 sm:flex-initial sm:w-52">
-                      <div className="p-2 sm:p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-2xs shrink-0">
+                      <div className="p-2 sm:p-2.5 rounded-2xl bg-stone-50 dark:bg-plum-850 border border-stone-200/90 dark:border-plum-800 shadow-2xs shrink-0">
                         <WeatherIcon
                           name={day.condition.icon}
                           className={`w-6 h-6 sm:w-7 sm:h-7 ${day.condition.color}`}
                         />
                       </div>
                       <div className="min-w-0">
-                        <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 block truncate">
+                        <span className="text-xs sm:text-sm font-bold text-stone-800 dark:text-stone-100 block truncate">
                           {day.condition.label}
                         </span>
                         {day.precipitationProbabilityMax > 0 ? (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-extrabold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-1.5 py-0.2 rounded-md mt-0.5">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-extrabold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/60 px-1.5 py-0.2 rounded-md mt-0.5 tabular-nums">
                             <Droplet className="w-3 h-3" />
                             {day.precipitationProbabilityMax}%
                             {day.precipitationSum > 0 && ` (${day.precipitationSum}mm)`}
                           </span>
                         ) : (
-                          <span className="text-[11px] font-medium text-slate-400 dark:text-slate-500">
+                          <span className="text-[11px] font-medium text-stone-400 dark:text-stone-500">
                             Sem chuva
                           </span>
                         )}
@@ -174,15 +174,15 @@ export const DailyForecast: React.FC<DailyForecastProps> = ({
                     </div>
 
                     {/* Visual Temperature Range Bar & Badges (Desktop) */}
-                    <div className="hidden md:flex items-center gap-3 flex-1 px-4">
-                      <span className="inline-flex items-center gap-0.5 text-xs font-black text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 px-2 py-0.5 rounded-lg shrink-0">
-                        <ArrowDown className="w-3 h-3 text-blue-500" />
+                    <div className="hidden md:flex items-center gap-3 flex-1 px-4 tabular-nums">
+                      <span className="inline-flex items-center gap-0.5 text-xs font-black text-indigo-700 dark:text-indigo-300 bg-indigo-50/80 dark:bg-indigo-950/50 border border-indigo-200/80 dark:border-indigo-800/70 px-2 py-0.5 rounded-lg shrink-0">
+                        <ArrowDown className="w-3 h-3 text-indigo-500" />
                         {day.tempMin}°C
                       </span>
 
-                      <div className="relative flex-1 h-2.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden border border-slate-200/50 dark:border-slate-700/50">
+                      <div className="relative flex-1 h-2.5 rounded-full bg-stone-100 dark:bg-plum-850 overflow-hidden border border-stone-200/60 dark:border-plum-800">
                         <div
-                          className="absolute top-0 bottom-0 rounded-full bg-gradient-to-r from-blue-500 via-amber-400 to-rose-500 shadow-2xs"
+                          className="absolute top-0 bottom-0 rounded-full bg-gradient-to-r from-[#7C8CE0] via-[#E5A97C] to-[#C94B72] shadow-2xs"
                           style={{
                             left: `${leftPercent}%`,
                             width: `${widthPercent}%`
@@ -197,18 +197,18 @@ export const DailyForecast: React.FC<DailyForecastProps> = ({
                     </div>
 
                     {/* Min/Max summary for Mobile */}
-                    <div className="md:hidden flex items-center gap-1.5 shrink-0">
-                      <span className="inline-flex items-center gap-0.5 text-xs font-extrabold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 px-1.5 py-0.5 rounded-lg">
+                    <div className="md:hidden flex items-center gap-1.5 shrink-0 tabular-nums">
+                      <span className="inline-flex items-center gap-0.5 text-xs font-extrabold text-indigo-700 dark:text-indigo-300 bg-indigo-50/80 dark:bg-indigo-950/50 border border-indigo-200/80 dark:border-indigo-800/70 px-1.5 py-0.5 rounded-lg">
                         {day.tempMin}°
                       </span>
-                      <span className="text-slate-300 dark:text-slate-600 font-bold">/</span>
+                      <span className="text-stone-300 dark:text-plum-800 font-bold">/</span>
                       <span className="inline-flex items-center gap-0.5 text-xs font-extrabold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 px-1.5 py-0.5 rounded-lg">
                         {day.tempMax}°
                       </span>
                     </div>
 
                     {/* Row Chevron */}
-                    <div className="p-1 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 shrink-0">
+                    <div className="p-1 text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300 shrink-0">
                       {isExpanded ? (
                         <ChevronUp className="w-4 h-4" />
                       ) : (
@@ -219,46 +219,46 @@ export const DailyForecast: React.FC<DailyForecastProps> = ({
 
                   {/* Expanded single-day details */}
                   {isExpanded && (
-                    <div className="px-4 pb-4 pt-1 bg-slate-50/70 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 animate-in fade-in duration-200">
+                    <div className="px-4 pb-4 pt-1 bg-stone-50/70 dark:bg-plum-850/60 border-t border-stone-100 dark:border-plum-800 animate-in fade-in duration-200">
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 text-xs">
-                        <div className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                          <span className="text-slate-400 dark:text-slate-400 block text-[10px] font-bold uppercase">
+                        <div className="p-2.5 rounded-xl bg-white dark:bg-plum-900 border border-stone-200 dark:border-plum-800">
+                          <span className="text-stone-400 dark:text-stone-400 block text-[10px] font-bold uppercase">
                             Sensação Térmica
                           </span>
-                          <div className="font-bold text-slate-800 dark:text-white mt-0.5">
+                          <div className="font-bold text-stone-800 dark:text-white mt-0.5 tabular-nums">
                             Mín {day.apparentTempMin}°C • Máx {day.apparentTempMax}°C
                           </div>
                         </div>
 
-                        <div className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                          <span className="text-slate-400 dark:text-slate-400 block text-[10px] font-bold uppercase">
+                        <div className="p-2.5 rounded-xl bg-white dark:bg-plum-900 border border-stone-200 dark:border-plum-800">
+                          <span className="text-stone-400 dark:text-stone-400 block text-[10px] font-bold uppercase">
                             Volume de Chuva
                           </span>
-                          <div className="font-bold text-blue-700 dark:text-blue-300 mt-0.5 flex items-center gap-1">
+                          <div className="font-bold text-brand-700 dark:text-brand-300 mt-0.5 flex items-center gap-1 tabular-nums">
                             <Droplet className="w-3.5 h-3.5" />
                             {day.precipitationSum} mm ({day.precipitationProbabilityMax}% prob.)
                           </div>
                         </div>
 
-                        <div className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                          <span className="text-slate-400 dark:text-slate-400 block text-[10px] font-bold uppercase">
+                        <div className="p-2.5 rounded-xl bg-white dark:bg-plum-900 border border-stone-200 dark:border-plum-800">
+                          <span className="text-stone-400 dark:text-stone-400 block text-[10px] font-bold uppercase">
                             Vento Máximo
                           </span>
-                          <div className="font-bold text-slate-800 dark:text-white mt-0.5 flex items-center gap-1">
-                            <Wind className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                          <div className="font-bold text-stone-800 dark:text-white mt-0.5 flex items-center gap-1 tabular-nums">
+                            <Wind className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
                             Até {day.windSpeedMax} km/h
                           </div>
                         </div>
 
-                        <div className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                          <span className="text-slate-400 dark:text-slate-400 block text-[10px] font-bold uppercase">
+                        <div className="p-2.5 rounded-xl bg-white dark:bg-plum-900 border border-stone-200 dark:border-plum-800">
+                          <span className="text-stone-400 dark:text-stone-400 block text-[10px] font-bold uppercase">
                             Índice UV / Sol
                           </span>
-                          <div className="font-bold text-slate-800 dark:text-white mt-0.5 flex items-center justify-between">
+                          <div className="font-bold text-stone-800 dark:text-white mt-0.5 flex items-center justify-between tabular-nums">
                             <span className={uvInfo.color}>
                               UV {day.uvIndexMax} ({uvInfo.level})
                             </span>
-                            <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                            <span className="text-[11px] text-stone-500 dark:text-stone-400">
                               {day.sunrise} - {day.sunset}
                             </span>
                           </div>

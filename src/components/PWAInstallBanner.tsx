@@ -83,7 +83,7 @@ export const PWAInstallBanner: React.FC = () => {
   return (
     <>
       {/* Mobile Fixed or In-Flow Install Banner */}
-      <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white p-3 sm:p-4 rounded-2xl shadow-md border border-blue-400/30 flex items-center justify-between gap-3 animate-in fade-in duration-300">
+      <div className="w-full bg-gradient-to-r from-brand-600 via-[#93325A] to-brand-800 text-white p-3 sm:p-4 rounded-2xl shadow-md border border-brand-300/30 flex items-center justify-between gap-3 animate-in fade-in duration-300">
         <div className="flex items-center gap-3 min-w-0">
           <div className="w-10 h-10 rounded-xl bg-white shadow-xs p-1 shrink-0 flex items-center justify-center">
             <img src="/favicon.svg" alt="Previsão do Tempo Agora" className="w-8 h-8 rounded-lg" />
@@ -92,7 +92,7 @@ export const PWAInstallBanner: React.FC = () => {
             <h4 className="font-extrabold text-xs sm:text-sm tracking-tight truncate leading-tight">
               Instalar o App no Celular
             </h4>
-            <p className="text-[11px] text-blue-100 truncate mt-0.5">
+            <p className="text-[11px] text-brand-100 truncate mt-0.5">
               Acesso rápido com previsão atualizada na sua tela inicial
             </p>
           </div>
@@ -102,7 +102,7 @@ export const PWAInstallBanner: React.FC = () => {
           <button
             id="pwa-install-action-btn"
             onClick={handleInstallClick}
-            className="px-3.5 py-1.5 bg-white text-blue-700 hover:bg-blue-50 active:scale-95 rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
+            className="px-3.5 py-1.5 bg-white text-brand-700 hover:bg-brand-50 active:scale-95 rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Instalar</span>
@@ -111,7 +111,7 @@ export const PWAInstallBanner: React.FC = () => {
             id="pwa-dismiss-banner-btn"
             onClick={handleDismiss}
             title="Fechar aviso"
-            className="p-1 text-blue-200 hover:text-white rounded-lg transition-colors"
+            className="p-1 text-brand-200 hover:text-white rounded-lg transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -120,51 +120,51 @@ export const PWAInstallBanner: React.FC = () => {
 
       {/* iOS Safari Step-by-Step Instructions Modal */}
       {showIOSModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-sm rounded-3xl bg-white dark:bg-slate-900 p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-plum-950/70 backdrop-blur-xs p-4 animate-in fade-in duration-200">
+          <div className="w-full max-w-sm rounded-3xl bg-white dark:bg-plum-900 p-6 shadow-2xl border border-stone-200 dark:border-plum-800 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-stone-100 dark:border-plum-800">
               <div className="flex items-center gap-2.5">
                 <img src="/favicon.svg" alt="App" className="w-7 h-7 rounded-lg" />
-                <h3 className="font-black text-slate-900 dark:text-white text-base">
+                <h3 className="font-black text-stone-900 dark:text-stone-100 text-base">
                   Adicionar à Tela Inicial
                 </h3>
               </div>
               <button
                 onClick={() => setShowIOSModal(false)}
-                className="p-1 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                className="p-1 rounded-xl text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            <p className="text-xs text-stone-600 dark:text-stone-300 leading-relaxed">
               Siga os 2 passos rápidos no Safari do seu iPhone ou iPad para ter o ícone na sua tela:
             </p>
 
             <div className="space-y-3 text-xs">
-              <div className="flex items-start gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-                <div className="p-2 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 shrink-0">
+              <div className="flex items-start gap-3 p-3 rounded-2xl bg-stone-50 dark:bg-plum-850 border border-stone-200 dark:border-plum-800">
+                <div className="p-2 rounded-xl bg-brand-100 dark:bg-brand-900/50 text-brand-600 dark:text-brand-300 shrink-0">
                   <Share2 className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="font-bold text-slate-800 dark:text-slate-100 block">
+                  <span className="font-bold text-stone-800 dark:text-stone-100 block">
                     1. Toque em Compartilhar
                   </span>
-                  <span className="text-slate-500 dark:text-slate-400 text-[11px]">
+                  <span className="text-stone-500 dark:text-stone-400 text-[11px]">
                     No menu inferior do Safari, clique no ícone do quadrado com a seta para cima.
                   </span>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+              <div className="flex items-start gap-3 p-3 rounded-2xl bg-stone-50 dark:bg-plum-850 border border-stone-200 dark:border-plum-800">
                 <div className="p-2 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 shrink-0">
                   <PlusSquare className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="font-bold text-slate-800 dark:text-slate-100 block">
+                  <span className="font-bold text-stone-800 dark:text-stone-100 block">
                     2. "Adicionar à Tela de Início"
                   </span>
-                  <span className="text-slate-500 dark:text-slate-400 text-[11px]">
+                  <span className="text-stone-500 dark:text-stone-400 text-[11px]">
                     Role as opções para baixo e selecione <strong>Adicionar à Tela de Início</strong>.
                   </span>
                 </div>
@@ -173,7 +173,7 @@ export const PWAInstallBanner: React.FC = () => {
 
             <button
               onClick={() => setShowIOSModal(false)}
-              className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-colors shadow-xs"
+              className="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs transition-colors shadow-xs cursor-pointer"
             >
               Entendi, obrigado!
             </button>

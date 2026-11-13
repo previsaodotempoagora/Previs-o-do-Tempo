@@ -143,10 +143,10 @@ export const CitySearch: React.FC<CitySearchProps> = ({
             id="toggle-search-icon-btn"
             onClick={handleToggleSearch}
             title={isOpen ? 'Fechar pesquisa' : 'Abrir pesquisa'}
-            className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors z-10 cursor-pointer"
+            className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-stone-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors z-10 cursor-pointer"
           >
             {isLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin text-blue-600 dark:text-blue-400" />
+              <Loader2 className="w-4 h-4 animate-spin text-brand-600 dark:text-brand-400" />
             ) : (
               <Search className="w-4 h-4" />
             )}
@@ -164,7 +164,7 @@ export const CitySearch: React.FC<CitySearchProps> = ({
             onMouseDown={handleMouseDown}
             onClick={handleInputClick}
             placeholder="Buscar qualquer cidade do Brasil..."
-            className="w-full pl-10 pr-10 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 shadow-2xs transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 dark:focus:border-blue-400 focus:bg-white dark:focus:bg-slate-800"
+            className="w-full pl-10 pr-10 py-2.5 bg-stone-50 dark:bg-plum-850 border border-stone-200 dark:border-plum-800 rounded-xl text-sm font-medium text-stone-800 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-500 shadow-2xs transition-all focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 dark:focus:border-brand-400 focus:bg-white dark:focus:bg-plum-850"
           />
 
           {query ? (
@@ -177,7 +177,7 @@ export const CitySearch: React.FC<CitySearchProps> = ({
                 inputRef.current?.focus();
               }}
               title="Limpar busca"
-              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 z-10 cursor-pointer"
+              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 z-10 cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -190,7 +190,7 @@ export const CitySearch: React.FC<CitySearchProps> = ({
                 inputRef.current?.blur();
               }}
               title="Fechar pesquisa"
-              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors z-10 cursor-pointer"
+              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors z-10 cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -203,12 +203,12 @@ export const CitySearch: React.FC<CitySearchProps> = ({
           onClick={onUseGps}
           disabled={isGpsLoading}
           title="Detectar minha localização atual via GPS ou Provedor"
-          className="flex items-center gap-1.5 px-3 sm:px-3.5 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-750 active:scale-95 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 shadow-2xs hover:text-blue-600 dark:hover:text-blue-400 transition-all whitespace-nowrap cursor-pointer"
+          className="flex items-center gap-1.5 px-3 sm:px-3.5 py-2.5 bg-white dark:bg-plum-850 hover:bg-brand-50/70 dark:hover:bg-plum-800 active:scale-95 border border-stone-200 dark:border-plum-800 rounded-xl text-xs font-bold text-stone-700 dark:text-stone-200 shadow-2xs hover:text-brand-600 dark:hover:text-brand-300 transition-all whitespace-nowrap cursor-pointer"
         >
           {isGpsLoading ? (
-            <Loader2 className="w-4 h-4 animate-spin text-blue-600 dark:text-blue-400" />
+            <Loader2 className="w-4 h-4 animate-spin text-brand-600 dark:text-brand-400" />
           ) : (
-            <Navigation className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            <Navigation className="w-4 h-4 text-brand-600 dark:text-brand-400" />
           )}
           <span className="hidden sm:inline">GPS</span>
         </button>
@@ -221,7 +221,7 @@ export const CitySearch: React.FC<CitySearchProps> = ({
           className={`p-2.5 border rounded-xl shadow-2xs transition-all active:scale-95 cursor-pointer ${
             isCurrentFavorite
               ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700 text-amber-500 hover:bg-amber-100'
-              : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 hover:text-amber-500 hover:bg-slate-50 dark:hover:bg-slate-700'
+              : 'bg-white dark:bg-plum-850 border-stone-200 dark:border-plum-800 text-stone-400 hover:text-amber-500 hover:bg-brand-50/70 dark:hover:bg-plum-800'
           }`}
         >
           <Star className={`w-4 h-4 ${isCurrentFavorite ? 'fill-amber-400 text-amber-500' : ''}`} />
@@ -232,10 +232,10 @@ export const CitySearch: React.FC<CitySearchProps> = ({
       {isOpen && (
         <div
           id="search-dropdown-results"
-          className="absolute z-50 left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl overflow-hidden max-h-[380px] overflow-y-auto custom-scrollbar animate-in fade-in slide-in-from-top-2 duration-150"
+          className="absolute z-50 left-0 right-0 mt-2 bg-white dark:bg-plum-900 border border-stone-200 dark:border-plum-800 rounded-2xl shadow-xl overflow-hidden max-h-[380px] overflow-y-auto custom-scrollbar animate-in fade-in slide-in-from-top-2 duration-150"
         >
           {/* Quick bar with Close button */}
-          <div className="flex items-center justify-between px-3.5 py-1.5 bg-slate-50 dark:bg-slate-800/80 border-b border-slate-100 dark:border-slate-800 text-[11px] text-slate-400">
+          <div className="flex items-center justify-between px-3.5 py-1.5 bg-stone-50 dark:bg-plum-850 border-b border-stone-100 dark:border-plum-800 text-[11px] text-stone-400">
             <span className="font-medium">{query ? `Resultados (${results.length})` : 'Pesquisa de Cidades'}</span>
             <button
               type="button"
@@ -243,7 +243,7 @@ export const CitySearch: React.FC<CitySearchProps> = ({
                 setIsOpen(false);
                 inputRef.current?.blur();
               }}
-              className="text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 font-semibold cursor-pointer"
+              className="text-stone-500 dark:text-stone-400 hover:text-brand-600 dark:hover:text-brand-400 font-semibold cursor-pointer"
             >
               Fechar (Esc)
             </button>
@@ -252,34 +252,34 @@ export const CitySearch: React.FC<CitySearchProps> = ({
           {query.trim().length > 0 ? (
             <div>
               {results.length > 0 ? (
-                <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                <div className="divide-y divide-stone-100 dark:divide-plum-800">
                   {results.map((city) => (
                     <button
                       key={city.id || `${city.lat}-${city.lon}`}
                       onClick={() => handleSelect(city)}
-                      className="w-full px-4 py-3 text-left flex items-center justify-between hover:bg-blue-50/70 dark:hover:bg-slate-800 transition-colors group cursor-pointer"
+                      className="w-full px-4 py-3 text-left flex items-center justify-between hover:bg-brand-50/70 dark:hover:bg-plum-800 transition-colors group cursor-pointer"
                     >
                       <div className="flex items-center gap-3">
-                        <MapPin className="w-4 h-4 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors shrink-0" />
+                        <MapPin className="w-4 h-4 text-stone-400 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors shrink-0" />
                         <div>
-                          <span className="font-bold text-sm text-slate-800 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                          <span className="font-bold text-sm text-stone-800 dark:text-stone-100 group-hover:text-brand-600 dark:group-hover:text-brand-400">
                             {city.name}
                           </span>
                           {city.state && (
-                            <span className="text-xs text-slate-500 dark:text-slate-400 ml-1.5">
+                            <span className="text-xs text-stone-500 dark:text-stone-400 ml-1.5">
                               - {city.state}
                             </span>
                           )}
                         </div>
                       </div>
-                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 group-hover:bg-blue-100 dark:group-hover:bg-blue-950 group-hover:text-blue-800 dark:group-hover:text-blue-300 shrink-0">
+                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-stone-100 dark:bg-plum-800 text-stone-600 dark:text-stone-300 group-hover:bg-brand-100 dark:group-hover:bg-brand-950 group-hover:text-brand-800 dark:group-hover:text-brand-300 shrink-0">
                         {city.stateCode || 'BR'}
                       </span>
                     </button>
                   ))}
                 </div>
               ) : !isLoading ? (
-                <div className="p-6 text-center text-sm text-slate-500 dark:text-slate-400">
+                <div className="p-6 text-center text-sm text-stone-500 dark:text-stone-400">
                   Nenhuma cidade encontrada para &quot;{query}&quot;. Tente sem acento ou verifique a ortografia.
                 </div>
               ) : null}
@@ -297,7 +297,7 @@ export const CitySearch: React.FC<CitySearchProps> = ({
                     {favorites.map((fav) => (
                       <div
                         key={fav.id}
-                        className="group flex items-center justify-between px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-amber-50 dark:hover:bg-amber-950/30 rounded-xl transition-colors"
+                        className="group flex items-center justify-between px-3 py-2 text-xs font-semibold text-stone-700 dark:text-stone-200 hover:bg-brand-50/70 dark:hover:bg-plum-800 rounded-xl transition-colors"
                       >
                         <button
                           type="button"
@@ -305,7 +305,7 @@ export const CitySearch: React.FC<CitySearchProps> = ({
                           className="flex-1 text-left flex items-center justify-between pr-2 cursor-pointer"
                         >
                           <span className="truncate">{fav.name}</span>
-                          <span className="text-[10px] text-slate-400 font-mono">{fav.stateCode}</span>
+                          <span className="text-[10px] text-stone-400 font-mono">{fav.stateCode}</span>
                         </button>
                         <button
                           type="button"
@@ -314,7 +314,7 @@ export const CitySearch: React.FC<CitySearchProps> = ({
                             onToggleFavorite(fav);
                           }}
                           title={`Remover ${fav.name} dos favoritos`}
-                          className="p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                          className="p-1 rounded-md text-stone-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
                         >
                           <X className="w-3.5 h-3.5" />
                         </button>
@@ -327,7 +327,7 @@ export const CitySearch: React.FC<CitySearchProps> = ({
               {/* Recent searches */}
               {recentSearches.length > 0 && (
                 <div>
-                  <div className="px-3 py-1.5 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                  <div className="px-3 py-1.5 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">
                     <History className="w-3 h-3" />
                     Buscadas Recentemente
                   </div>
@@ -336,10 +336,10 @@ export const CitySearch: React.FC<CitySearchProps> = ({
                       <button
                         key={rec.id}
                         onClick={() => handleSelect(rec)}
-                        className="w-full px-3 py-2 text-left text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors flex items-center justify-between cursor-pointer"
+                        className="w-full px-3 py-2 text-left text-xs font-medium text-stone-700 dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-plum-800 rounded-xl transition-colors flex items-center justify-between cursor-pointer"
                       >
                         <span className="font-medium">{rec.name}</span>
-                        <span className="text-[11px] text-slate-400">{rec.stateCode || rec.state}</span>
+                        <span className="text-[11px] text-stone-400">{rec.stateCode || rec.state}</span>
                       </button>
                     ))}
                   </div>
@@ -349,11 +349,11 @@ export const CitySearch: React.FC<CitySearchProps> = ({
               {/* If no favorites and no recent searches */}
               {favorites.length === 0 && recentSearches.length === 0 && (
                 <div className="py-6 px-4 text-center">
-                  <Search className="w-6 h-6 mx-auto text-slate-300 dark:text-slate-600 mb-2" />
-                  <p className="text-xs font-semibold text-slate-700 dark:text-slate-200">
+                  <Search className="w-6 h-6 mx-auto text-stone-300 dark:text-stone-600 mb-2" />
+                  <p className="text-xs font-semibold text-stone-700 dark:text-stone-200">
                     Digite o nome de qualquer cidade ou estado
                   </p>
-                  <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">
+                  <p className="text-[11px] text-stone-400 dark:text-stone-500 mt-1">
                     Ex: Campinas, Niterói, Uberlândia, Caxias do Sul, Londrina...
                   </p>
                 </div>

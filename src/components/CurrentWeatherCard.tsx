@@ -85,15 +85,15 @@ export const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
   const getThemeBackground = () => {
     if (isNight) {
       return {
-        wrapperBg: 'bg-gradient-to-b from-[#0A1633] via-[#0E2045] to-[#070E1E] text-white border-blue-900/60 shadow-xl shadow-blue-950/40',
+        wrapperBg: 'bg-gradient-to-b from-[#1D1228] via-[#2C1A3D] to-[#140C1C] text-white border-purple-900/50 shadow-xl shadow-purple-950/35',
         textColor: 'text-white',
-        mutedText: 'text-blue-200/80',
-        badgeBg: 'bg-white/10 backdrop-blur-md border border-white/15 text-sky-200',
+        mutedText: 'text-rose-200/80',
+        badgeBg: 'bg-white/10 backdrop-blur-md border border-white/15 text-rose-100',
         tempColor: 'text-white',
-        degreeColor: 'text-sky-300',
+        degreeColor: 'text-rose-200',
         subBoxBg: 'bg-white/10 backdrop-blur-md border border-white/15 text-white',
-        subBoxMuted: 'text-blue-200/70',
-        iconBg: 'bg-blue-950/60 border border-blue-800/40 text-sky-300 shadow-inner'
+        subBoxMuted: 'text-rose-200/75',
+        iconBg: 'bg-purple-950/60 border border-purple-700/40 text-amber-200 shadow-inner'
       };
     }
 
@@ -102,59 +102,59 @@ export const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
     // Rainy conditions (61-65, 80-82)
     if (code >= 51 && code <= 82) {
       return {
-        wrapperBg: 'bg-gradient-to-br from-[#1E293B] via-[#2D3E56] to-[#3B82F6]/75 text-white border-slate-700/60 shadow-lg',
+        wrapperBg: 'bg-gradient-to-br from-[#3B2E44] via-[#53425E] to-[#836283] text-white border-purple-900/35 shadow-lg',
         textColor: 'text-white',
-        mutedText: 'text-slate-200/80',
-        badgeBg: 'bg-white/15 backdrop-blur-md border border-white/20 text-sky-100',
+        mutedText: 'text-rose-100/85',
+        badgeBg: 'bg-white/15 backdrop-blur-md border border-white/20 text-rose-50',
         tempColor: 'text-white',
-        degreeColor: 'text-sky-300',
+        degreeColor: 'text-rose-200',
         subBoxBg: 'bg-white/10 backdrop-blur-md border border-white/15 text-white',
-        subBoxMuted: 'text-slate-200/70',
-        iconBg: 'bg-slate-900/40 border border-slate-700/40 text-sky-300'
+        subBoxMuted: 'text-rose-100/75',
+        iconBg: 'bg-purple-950/35 border border-white/20 text-rose-200'
       };
     }
 
     // Overcast / Fog (3, 45, 48)
     if (code === 3 || code === 45 || code === 48) {
       return {
-        wrapperBg: 'bg-gradient-to-br from-[#334155] via-[#475569] to-[#64748B] text-white border-slate-600/50 shadow-lg',
+        wrapperBg: 'bg-gradient-to-br from-[#554750] via-[#6D5B66] to-[#8E7A86] text-white border-stone-600/40 shadow-lg',
         textColor: 'text-white',
-        mutedText: 'text-slate-200/80',
-        badgeBg: 'bg-white/15 backdrop-blur-md border border-white/20 text-slate-100',
+        mutedText: 'text-rose-100/80',
+        badgeBg: 'bg-white/15 backdrop-blur-md border border-white/20 text-stone-100',
         tempColor: 'text-white',
-        degreeColor: 'text-slate-200',
+        degreeColor: 'text-rose-200',
         subBoxBg: 'bg-white/10 backdrop-blur-md border border-white/15 text-white',
-        subBoxMuted: 'text-slate-200/70',
-        iconBg: 'bg-slate-800/50 border border-slate-600/40 text-slate-200'
+        subBoxMuted: 'text-rose-100/75',
+        iconBg: 'bg-stone-800/40 border border-white/20 text-rose-100'
       };
     }
 
     // Thunderstorm (95, 96, 99)
     if (code >= 95) {
       return {
-        wrapperBg: 'bg-gradient-to-br from-[#111827] via-[#1E1B4B] to-[#312E81] text-white border-indigo-900/60 shadow-xl',
+        wrapperBg: 'bg-gradient-to-br from-[#1C1226] via-[#341C44] to-[#522861] text-white border-purple-900/50 shadow-xl',
         textColor: 'text-white',
-        mutedText: 'text-indigo-200/80',
+        mutedText: 'text-purple-200/80',
         badgeBg: 'bg-white/15 backdrop-blur-md border border-white/20 text-amber-200',
         tempColor: 'text-white',
         degreeColor: 'text-amber-300',
         subBoxBg: 'bg-white/10 backdrop-blur-md border border-white/15 text-white',
-        subBoxMuted: 'text-indigo-200/70',
-        iconBg: 'bg-indigo-950/60 border border-indigo-800/40 text-amber-400'
+        subBoxMuted: 'text-purple-200/75',
+        iconBg: 'bg-purple-950/60 border border-purple-800/40 text-amber-300'
       };
     }
 
-    // Sunny / Clear sky (0, 1, 2)
+    // Sunny / Clear sky (0, 1, 2) - Sunlit Rose Gold & Velvet Berry
     return {
-      wrapperBg: 'bg-gradient-to-br from-[#1E60D5] via-[#2F80ED] to-[#56CCF2] text-white border-blue-400/40 shadow-lg shadow-blue-500/20',
+      wrapperBg: 'bg-gradient-to-br from-[#A2345A] via-[#C65277] to-[#E5988B] text-white border-brand-400/40 shadow-lg shadow-brand-500/20',
       textColor: 'text-white',
-      mutedText: 'text-blue-100/90',
+      mutedText: 'text-rose-50/90',
       badgeBg: 'bg-white/20 backdrop-blur-md border border-white/25 text-white',
       tempColor: 'text-white',
-      degreeColor: 'text-amber-300',
+      degreeColor: 'text-amber-200',
       subBoxBg: 'bg-white/15 backdrop-blur-md border border-white/20 text-white',
-      subBoxMuted: 'text-blue-100/80',
-      iconBg: 'bg-white/20 backdrop-blur-md border border-white/30 text-amber-300 shadow-md'
+      subBoxMuted: 'text-rose-50/85',
+      iconBg: 'bg-white/20 backdrop-blur-md border border-white/30 text-amber-200 shadow-md'
     };
   };
 
@@ -168,20 +168,20 @@ export const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
       >
         {/* Decorative Celestial Backdrops */}
         {isNight ? (
-          // Xiaomi Night Sky Stars & subtle ambient glow
-          <div className="absolute inset-0 pointer-events-none opacity-40 overflow-hidden">
-            <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-blue-500/20 blur-3xl" />
+          // Night Sky Stars & subtle plum ambient glow
+          <div className="absolute inset-0 pointer-events-none opacity-45 overflow-hidden">
+            <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-brand-400/20 blur-3xl" />
             <div className="absolute top-8 left-1/4 w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-            <div className="absolute top-16 right-1/3 w-1 h-1 rounded-full bg-blue-200 animate-pulse" />
-            <div className="absolute bottom-12 left-1/2 w-1.5 h-1.5 rounded-full bg-sky-200 animate-pulse" />
+            <div className="absolute top-16 right-1/3 w-1 h-1 rounded-full bg-rose-200 animate-pulse" />
+            <div className="absolute bottom-12 left-1/2 w-1.5 h-1.5 rounded-full bg-amber-100 animate-pulse" />
             <div className="absolute top-24 right-1/4 w-1 h-1 rounded-full bg-white opacity-80" />
             <div className="absolute bottom-6 left-1/6 w-1 h-1 rounded-full bg-white opacity-60" />
           </div>
         ) : (
-          // Sunny / Daylight Sky Glow
-          <div className="absolute inset-0 pointer-events-none opacity-30 overflow-hidden">
+          // Sunny / Daylight Champagne-Rose Glow
+          <div className="absolute inset-0 pointer-events-none opacity-35 overflow-hidden">
             <div className="absolute -top-12 -right-12 w-64 h-64 rounded-full bg-white/25 blur-2xl" />
-            <div className="absolute -bottom-16 -left-16 w-56 h-56 rounded-full bg-amber-400/20 blur-2xl" />
+            <div className="absolute -bottom-16 -left-16 w-56 h-56 rounded-full bg-amber-200/25 blur-2xl" />
           </div>
         )}
 
@@ -361,18 +361,18 @@ export const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
           {/* Alerts banner if any */}
           {alerts.length > 0 && (
             <div className="mt-2 space-y-2">
-              {alerts.map((alert, idx) => (
+                  {alerts.map((alert, idx) => (
                 <div
                   key={idx}
                   className={`p-3 rounded-2xl flex items-start gap-3 text-xs leading-relaxed backdrop-blur-md ${
                     alert.type === 'warning'
                       ? 'bg-amber-500/20 border border-amber-300/40 text-amber-100'
-                      : 'bg-blue-500/20 border border-blue-300/40 text-blue-100'
+                      : 'bg-rose-950/35 border border-rose-200/35 text-rose-50'
                   }`}
                 >
                   <AlertTriangle
                     className={`w-4 h-4 shrink-0 mt-0.5 ${
-                      alert.type === 'warning' ? 'text-amber-300' : 'text-blue-300'
+                      alert.type === 'warning' ? 'text-amber-300' : 'text-rose-200'
                     }`}
                   />
                   <div>

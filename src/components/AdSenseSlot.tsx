@@ -33,12 +33,12 @@ export const AdSenseSlot: React.FC<AdSenseSlotProps> = ({
       id={`adsense-wrapper-${slotId}`}
     >
       {/* Official AdSense label mandatory by policy */}
-      <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
+      <span className="text-[10px] font-black uppercase tracking-wider text-stone-400 dark:text-stone-500 mb-1">
         Publicidade
       </span>
 
       {/* Ad container */}
-      <div className="w-full bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 rounded-2xl min-h-[90px] flex items-center justify-center p-3 text-center overflow-hidden">
+      <div className="w-full bg-stone-50 dark:bg-plum-850 border border-stone-200 dark:border-plum-800 rounded-2xl min-h-[90px] flex items-center justify-center p-3 text-center overflow-hidden">
         {/* Real AdSense tag */}
         <ins
           className="adsbygoogle block w-full text-center"
@@ -50,11 +50,11 @@ export const AdSenseSlot: React.FC<AdSenseSlotProps> = ({
         />
 
         {/* Clean fallback banner */}
-        <div className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 text-xs py-2">
-          <span className="font-bold text-slate-500 dark:text-slate-400 text-[11px]">
+        <div className="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 text-xs py-2">
+          <span className="font-bold text-stone-500 dark:text-stone-400 text-[11px]">
             Espaço Reservado para Anúncios
           </span>
-          <span className="text-[10px] text-slate-400 dark:text-slate-500">
+          <span className="text-[10px] text-stone-400 dark:text-stone-500">
             Formato Responsivo • Google AdSense
           </span>
         </div>

@@ -29,19 +29,19 @@ export const FavoritesBar: React.FC<FavoritesBarProps> = ({
       className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5"
       id="favorites-bar-section"
     >
-      <div className="flex items-center gap-1 text-[11px] font-semibold text-slate-400 dark:text-slate-500 shrink-0">
+      <div className="flex items-center gap-1 text-[11px] font-semibold text-stone-400 dark:text-stone-500 shrink-0">
         <Star className="w-3 h-3 text-amber-500 fill-amber-400 shrink-0" />
         <span>Favoritas:</span>
       </div>
 
       {favorites.length === 0 ? (
-        <div className="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500">
+        <div className="flex items-center gap-2 text-xs text-stone-400 dark:text-stone-500">
           <span className="text-[11px]">Nenhuma salva</span>
           {onAddFavorite && !isCurrentFavorited && (
             <button
               type="button"
               onClick={() => onAddFavorite(currentLocation)}
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800/60 hover:bg-brand-100 dark:hover:bg-brand-900/60 transition-colors cursor-pointer"
             >
               <Plus className="w-3 h-3" />
               Salvar {currentLocation.name}
@@ -61,8 +61,8 @@ export const FavoritesBar: React.FC<FavoritesBarProps> = ({
                 key={`fav-bar-${city.id || city.name}-${idx}`}
                 className={`inline-flex items-center rounded-full text-xs font-medium transition-all group shrink-0 ${
                   isSelected
-                    ? 'bg-blue-600 text-white font-bold shadow-xs'
-                    : 'bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800/70 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200'
+                    ? 'bg-brand-600 text-white font-bold shadow-xs'
+                    : 'bg-stone-100 hover:bg-brand-50 dark:bg-plum-850 dark:hover:bg-plum-800 text-stone-700 dark:text-stone-200 border border-stone-200/70 dark:border-plum-800'
                 }`}
               >
                 <button
@@ -76,8 +76,8 @@ export const FavoritesBar: React.FC<FavoritesBarProps> = ({
                     <span
                       className={`text-[9px] font-mono font-bold px-1 rounded ${
                         isSelected
-                          ? 'bg-blue-700 text-white'
-                          : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
+                          ? 'bg-brand-700 text-white'
+                          : 'bg-stone-200/80 dark:bg-plum-800 text-stone-500 dark:text-stone-400'
                       }`}
                     >
                       {city.stateCode}
@@ -95,8 +95,8 @@ export const FavoritesBar: React.FC<FavoritesBarProps> = ({
                   title={`Remover ${city.name} dos favoritos`}
                   className={`p-1 mr-1 rounded-full transition-colors cursor-pointer ${
                     isSelected
-                      ? 'hover:bg-blue-700/80 text-blue-200 hover:text-white'
-                      : 'hover:bg-rose-100 dark:hover:bg-rose-950/60 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400'
+                      ? 'hover:bg-brand-700/80 text-brand-200 hover:text-white'
+                      : 'hover:bg-rose-100 dark:hover:bg-rose-950/60 text-stone-400 hover:text-rose-600 dark:hover:text-rose-400'
                   }`}
                   aria-label={`Remover ${city.name} dos favoritos`}
                 >
