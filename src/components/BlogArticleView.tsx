@@ -156,8 +156,11 @@ export const BlogArticleView: React.FC<BlogArticleViewProps> = ({
                 className="w-full h-full object-cover"
               />
             </div>
-            <figcaption className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed px-1">
-              {articleImages.hero.caption}
+            <figcaption className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed px-1 space-y-0.5">
+              <span className="block">{articleImages.hero.caption}</span>
+              <span className="block text-[11px] text-stone-400 dark:text-stone-500 italic">
+                Imagem ilustrativa livre de direitos autorais (sem restrição de uso).
+              </span>
             </figcaption>
           </figure>
 
@@ -251,8 +254,11 @@ export const BlogArticleView: React.FC<BlogArticleViewProps> = ({
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <figcaption className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed px-1">
-                        {articleImages.secondary.caption}
+                      <figcaption className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed px-1 space-y-0.5">
+                        <span className="block">{articleImages.secondary.caption}</span>
+                        <span className="block text-[11px] text-stone-400 dark:text-stone-500 italic">
+                          Imagem ilustrativa livre de direitos autorais (sem restrição de uso).
+                        </span>
                       </figcaption>
                     </figure>
                     <AdSenseSlot slotId={`blog-mid-${article.slug}`} format="auto" className="my-6" />

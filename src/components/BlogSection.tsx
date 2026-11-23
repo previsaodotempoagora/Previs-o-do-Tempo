@@ -282,14 +282,19 @@ export const BlogSection: React.FC<BlogSectionProps> = ({
             </div>
 
             <div className="lg:col-span-5 space-y-3">
-              <div className="aspect-video w-full overflow-hidden rounded-2xl border border-stone-200/80 dark:border-plum-800 bg-stone-100 dark:bg-plum-850">
-                <img
-                  src={getArticleImages(leadArticle).hero.src}
-                  alt={getArticleImages(leadArticle).hero.alt}
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              <figure className="space-y-1.5">
+                <div className="aspect-video w-full overflow-hidden rounded-2xl border border-stone-200/80 dark:border-plum-800 bg-stone-100 dark:bg-plum-850">
+                  <img
+                    src={getArticleImages(leadArticle).hero.src}
+                    alt={getArticleImages(leadArticle).hero.alt}
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <figcaption className="text-[11px] text-stone-400 dark:text-stone-500 italic px-1">
+                  Imagem ilustrativa livre de direitos autorais
+                </figcaption>
+              </figure>
               <div className="p-4 rounded-2xl bg-stone-50 dark:bg-plum-850 border border-stone-200/80 dark:border-plum-800 space-y-2">
                 <h3 className="text-xs font-extrabold uppercase tracking-wider text-stone-500 dark:text-stone-400">
                   Resumo Rápido
@@ -347,23 +352,28 @@ export const BlogSection: React.FC<BlogSectionProps> = ({
                   className="bg-white dark:bg-plum-900 rounded-2xl border border-stone-200/90 dark:border-plum-800 hover:border-brand-300 dark:hover:border-brand-700 overflow-hidden flex flex-col justify-between transition-colors shadow-2xs group"
                 >
                   <div>
-                    <a
-                      href={`/blog/${article.slug}`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        onOpenArticle(article.slug);
-                      }}
-                      className="block aspect-video w-full overflow-hidden bg-stone-100 dark:bg-plum-850"
-                    >
-                      <img
-                        src={cardImg.src}
-                        alt={cardImg.alt}
-                        referrerPolicy="no-referrer"
-                        loading="lazy"
-                        className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
-                      />
-                    </a>
-                    <div className="p-5 pb-3 space-y-2.5">
+                    <figure>
+                      <a
+                        href={`/blog/${article.slug}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          onOpenArticle(article.slug);
+                        }}
+                        className="block aspect-video w-full overflow-hidden bg-stone-100 dark:bg-plum-850"
+                      >
+                        <img
+                          src={cardImg.src}
+                          alt={cardImg.alt}
+                          referrerPolicy="no-referrer"
+                          loading="lazy"
+                          className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
+                        />
+                      </a>
+                      <figcaption className="px-5 pt-2 text-[10px] text-stone-400 dark:text-stone-500 italic">
+                        Imagem ilustrativa livre de direitos autorais
+                      </figcaption>
+                    </figure>
+                    <div className="p-5 pt-2.5 pb-3 space-y-2.5">
                       <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] font-medium text-stone-500 dark:text-stone-400">
                         <span className="font-bold text-brand-600 dark:text-brand-300">
                           {article.category}
