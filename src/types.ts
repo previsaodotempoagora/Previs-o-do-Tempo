@@ -78,7 +78,7 @@ export interface FullWeatherData {
   updatedAt: Date;
 }
 
-export type ForecastTab = 'today' | '7days' | '15days';
+export type ForecastTab = 'today' | '7days' | '15days' | 'blog';
 
 export type ThemeMode = 'auto' | 'light' | 'dark';
 

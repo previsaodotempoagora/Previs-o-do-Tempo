@@ -23,6 +23,8 @@ import { BrazilRegionsOverview } from './components/BrazilRegionsOverview';
 import { WeatherEducationSection } from './components/WeatherEducationSection';
 import { WeatherFaqSection } from './components/WeatherFaqSection';
 import { AdSenseSlot } from './components/AdSenseSlot';
+import { BlogSection } from './components/BlogSection';
+import { getArticleBySlug } from './data/blogArticles';
 import { InstitutionalModal, InstitutionalTab } from './components/InstitutionalModal';
 import { CookieBanner } from './components/CookieBanner';
 import { PWAInstallBanner } from './components/PWAInstallBanner';
@@ -78,7 +80,29 @@ export default function App() {
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [isGpsLoading, setIsGpsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<ForecastTab>('today');
+
+  const [activeTab, setActiveTab] = useState<ForecastTab>(() => {
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname.replace(/\/+$/, '');
+      if (path === '/blog' || path.startsWith('/blog/')) {
+        return 'blog';
+      }
+    }
+    return 'today';
+  });
+
+  const [selectedBlogSlug, setSelectedBlogSlug] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname.replace(/\/+$/, '');
+      if (path.startsWith('/blog/')) {
+        const slug = path.slice('/blog/'.length);
+        if (slug && getArticleBySlug(slug)) {
+          return slug;
+        }
+      }
+    }
+    return null;
+  });
 
   // Objective accordion states for 7 and 15 days
   const [is7DaysFullOpen, setIs7DaysFullOpen] = useState<boolean>(false);
@@ -205,20 +229,53 @@ export default function App() {
     loadWeather(selectedLocation);
   }, [selectedLocation, loadWeather]);
 
-  // Sync dynamic page title and canonical URL for SEO / Search Console
+  // Sync browser Back/Forward navigation for /blog and /blog/:slug
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handlePopState = () => {
+      const path = window.location.pathname.replace(/\/+$/, '');
+      if (path === '/blog') {
+        setActiveTab('blog');
+        setSelectedBlogSlug(null);
+      } else if (path.startsWith('/blog/')) {
+        const slug = path.slice('/blog/'.length);
+        setActiveTab('blog');
+        setSelectedBlogSlug(getArticleBySlug(slug) ? slug : null);
+      } else {
+        setSelectedBlogSlug(null);
+        setActiveTab((prev) => (prev === 'blog' ? 'today' : prev));
+        const params = new URLSearchParams(window.location.search);
+        const cityParam = params.get('cidade');
+        if (cityParam) {
+          const matchedCity = ALL_PRESET_CITIES.find((c) => c.id === cityParam);
+          if (matchedCity) setSelectedLocation(matchedCity);
+        }
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // Sync dynamic page title, meta description, canonical URL & Schema.org JSON-LD
   useEffect(() => {
     if (typeof document === 'undefined' || typeof window === 'undefined') return;
-    const citySuffix = selectedLocation.stateCode
-      ? `${selectedLocation.name}, ${selectedLocation.stateCode}`
-      : selectedLocation.name;
-    document.title = `Previsão do Tempo em ${citySuffix} - Hoje, 7 e 15 Dias | Previsão do Tempo Agora`;
 
-    const isPresetCity = ALL_PRESET_CITIES.some((c) => c.id === selectedLocation.id);
-    const params = new URLSearchParams(window.location.search);
-    const canonicalUrl =
-      params.get('cidade') === selectedLocation.id && isPresetCity
-        ? `${window.location.origin}/?cidade=${selectedLocation.id}`
-        : `${window.location.origin}${window.location.pathname}`;
+    const baseOrigin = 'https://www.previsaodotempoagora.com.br';
+    const currentOrigin =
+      window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? window.location.origin
+        : baseOrigin;
+
+    const updateMetaTag = (selector: string, content: string, attrName: 'name' | 'property', attrVal: string) => {
+      let el = document.querySelector(selector) as HTMLMetaElement | null;
+      if (!el) {
+        el = document.createElement('meta');
+        el.setAttribute(attrName, attrVal);
+        document.head.appendChild(el);
+      }
+      el.content = content;
+    };
 
     let canonicalEl = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
     if (!canonicalEl) {
@@ -226,11 +283,172 @@ export default function App() {
       canonicalEl.rel = 'canonical';
       document.head.appendChild(canonicalEl);
     }
+
+    const existingJsonLd = document.getElementById('dynamic-blog-jsonld');
+
+    if (activeTab === 'blog') {
+      const article = selectedBlogSlug ? getArticleBySlug(selectedBlogSlug) : undefined;
+      if (article) {
+        const articleUrl = `${currentOrigin}/blog/${article.slug}`;
+        document.title = article.metaTitle;
+        updateMetaTag('meta[name="description"]', article.metaDescription, 'name', 'description');
+        updateMetaTag('meta[property="og:title"]', article.metaTitle, 'property', 'og:title');
+        updateMetaTag('meta[property="og:description"]', article.metaDescription, 'property', 'og:description');
+        updateMetaTag('meta[property="og:url"]', articleUrl, 'property', 'og:url');
+        canonicalEl.href = articleUrl;
+
+        const graphSchemas: Record<string, unknown>[] = [
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Article',
+            headline: article.title,
+            description: article.metaDescription,
+            datePublished: article.publishedAt,
+            dateModified: article.updatedAt,
+            inLanguage: 'pt-BR',
+            mainEntityOfPage: {
+              '@type': 'WebPage',
+              '@id': articleUrl
+            },
+            author: {
+              '@type': 'Organization',
+              name: article.author
+            },
+            publisher: {
+              '@type': 'Organization',
+              name: 'Previsão do Tempo Agora',
+              url: baseOrigin
+            }
+          }
+        ];
+
+        if (article.faqs.length > 0) {
+          graphSchemas.push({
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: article.faqs.map((f) => ({
+              '@type': 'Question',
+              name: f.question,
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: f.answer
+              }
+            }))
+          });
+        }
+
+        const scriptEl = existingJsonLd || document.createElement('script');
+        scriptEl.id = 'dynamic-blog-jsonld';
+        scriptEl.setAttribute('type', 'application/ld+json');
+        scriptEl.textContent = JSON.stringify(graphSchemas);
+        if (!existingJsonLd) document.head.appendChild(scriptEl);
+      } else {
+        const blogUrl = `${currentOrigin}/blog`;
+        const blogTitle =
+          'Blog do Clima e Prevenção: Guias por Estado | Previsão do Tempo Agora';
+        const blogDesc =
+          'Guias completos sobre o clima de cada estado do Brasil, como se proteger de tempestades, calor extremo, frentes frias e cuidar da saúde.';
+        document.title = blogTitle;
+        updateMetaTag('meta[name="description"]', blogDesc, 'name', 'description');
+        updateMetaTag('meta[property="og:title"]', blogTitle, 'property', 'og:title');
+        updateMetaTag('meta[property="og:description"]', blogDesc, 'property', 'og:description');
+        updateMetaTag('meta[property="og:url"]', blogUrl, 'property', 'og:url');
+        canonicalEl.href = blogUrl;
+
+        const scriptEl = existingJsonLd || document.createElement('script');
+        scriptEl.id = 'dynamic-blog-jsonld';
+        scriptEl.setAttribute('type', 'application/ld+json');
+        scriptEl.textContent = JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'Blog',
+          name: 'Blog Previsão do Tempo Agora',
+          description: blogDesc,
+          url: blogUrl,
+          inLanguage: 'pt-BR'
+        });
+        if (!existingJsonLd) document.head.appendChild(scriptEl);
+      }
+      return;
+    }
+
+    if (existingJsonLd) {
+      existingJsonLd.remove();
+    }
+
+    const citySuffix = selectedLocation.stateCode
+      ? `${selectedLocation.name}, ${selectedLocation.stateCode}`
+      : selectedLocation.name;
+    const weatherTitle = `Previsão do Tempo em ${citySuffix} - Hoje, 7 e 15 Dias | Previsão do Tempo Agora`;
+    const weatherDesc = `Previsão do tempo precisa e em tempo real para ${citySuffix}. Confira temperatura, chuva, índice UV e vento hoje, nos próximos 7 dias e 15 dias.`;
+    document.title = weatherTitle;
+    updateMetaTag('meta[name="description"]', weatherDesc, 'name', 'description');
+    updateMetaTag('meta[property="og:title"]', weatherTitle, 'property', 'og:title');
+    updateMetaTag('meta[property="og:description"]', weatherDesc, 'property', 'og:description');
+
+    const isPresetCity = ALL_PRESET_CITIES.some((c) => c.id === selectedLocation.id);
+    const params = new URLSearchParams(window.location.search);
+    const canonicalUrl =
+      params.get('cidade') === selectedLocation.id && isPresetCity
+        ? `${currentOrigin}/?cidade=${selectedLocation.id}`
+        : `${currentOrigin}/`;
+
+    updateMetaTag('meta[property="og:url"]', canonicalUrl, 'property', 'og:url');
     canonicalEl.href = canonicalUrl;
-  }, [selectedLocation]);
+  }, [selectedLocation, activeTab, selectedBlogSlug]);
+
+  const handleChangeTab = (tab: ForecastTab) => {
+    setActiveTab(tab);
+    if (typeof window === 'undefined') return;
+    if (tab === 'blog') {
+      setSelectedBlogSlug(null);
+      if (window.location.pathname !== '/blog') {
+        window.history.pushState({ tab: 'blog' }, '', '/blog');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      setSelectedBlogSlug(null);
+      if (window.location.pathname.startsWith('/blog')) {
+        const isPreset = ALL_PRESET_CITIES.some((c) => c.id === selectedLocation.id);
+        const nextUrl = isPreset ? `/?cidade=${selectedLocation.id}` : '/';
+        window.history.pushState({ tab }, '', nextUrl);
+      }
+    }
+  };
+
+  const handleOpenBlogArticle = (slug: string) => {
+    setActiveTab('blog');
+    setSelectedBlogSlug(slug);
+    if (typeof window !== 'undefined') {
+      const targetPath = `/blog/${slug}`;
+      if (window.location.pathname !== targetPath) {
+        window.history.pushState({ tab: 'blog', slug }, '', targetPath);
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleBackToBlog = () => {
+    setActiveTab('blog');
+    setSelectedBlogSlug(null);
+    if (typeof window !== 'undefined') {
+      if (window.location.pathname !== '/blog') {
+        window.history.pushState({ tab: 'blog' }, '', '/blog');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   const handleSelectCity = (location: LocationData) => {
     setSelectedLocation(location);
+    if (activeTab === 'blog') {
+      setSelectedBlogSlug(null);
+      setActiveTab('today');
+      if (typeof window !== 'undefined') {
+        const isPreset = ALL_PRESET_CITIES.some((c) => c.id === location.id);
+        window.history.pushState({ tab: 'today' }, '', isPreset ? `/?cidade=${location.id}` : '/');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   // Resilient GPS handler with multi-stage accuracy and non-blocking notifications
@@ -369,6 +587,8 @@ export default function App() {
         favorites={favorites}
         onToggleFavorite={handleToggleFavorite}
         onOpenInstitutional={openInstitutional}
+        onOpenBlog={() => handleChangeTab('blog')}
+        isBlogActive={activeTab === 'blog'}
         themeMode={themeMode}
         onSelectThemeMode={setThemeMode}
         isDarkMode={isDarkMode}
@@ -392,25 +612,34 @@ export default function App() {
         {/* PWA Mobile Shortcut / Install Banner */}
         <PWAInstallBanner />
 
-        {/* Cidades Favoritas */}
-        <div className="w-full overflow-x-auto no-scrollbar py-0.5" id="favorites-bar-container">
-          <FavoritesBar
-            currentLocation={selectedLocation}
-            favorites={favorites}
-            onSelectCity={handleSelectCity}
-            onRemoveFavorite={handleRemoveFavorite}
-            onAddFavorite={handleToggleFavorite}
-          />
-        </div>
+        {/* Cidades Favoritas (oculto apenas durante leitura de artigo para foco editorial) */}
+        {activeTab !== 'blog' && (
+          <div className="w-full overflow-x-auto no-scrollbar py-0.5" id="favorites-bar-container">
+            <FavoritesBar
+              currentLocation={selectedLocation}
+              favorites={favorites}
+              onSelectCity={handleSelectCity}
+              onRemoveFavorite={handleRemoveFavorite}
+              onAddFavorite={handleToggleFavorite}
+            />
+          </div>
+        )}
 
-        {/* Tab Navigation: Hoje / 7 Dias / 15 Dias */}
+        {/* Tab Navigation: Hoje / 7 Dias / 15 Dias / Blog & Guias */}
         <TabNavigation
           activeTab={activeTab}
-          onChangeTab={setActiveTab}
+          onChangeTab={handleChangeTab}
         />
 
-        {/* Loading State */}
-        {isLoading && !weatherData ? (
+        {/* VIEW 4: BLOG & GUIAS DE PREVENÇÃO E ESTADOS */}
+        {activeTab === 'blog' ? (
+          <BlogSection
+            selectedSlug={selectedBlogSlug}
+            onOpenArticle={handleOpenBlogArticle}
+            onBackToBlog={handleBackToBlog}
+            onSelectCityWeather={handleSelectCity}
+          />
+        ) : isLoading && !weatherData ? (
           <div className="py-20 flex flex-col items-center justify-center text-center space-y-3 bg-white dark:bg-plum-900 rounded-3xl border border-stone-200/90 dark:border-plum-800 p-8 shadow-xs">
             <Loader2 className="w-8 h-8 text-brand-600 dark:text-brand-400 animate-spin" />
             <p className="text-sm font-bold text-stone-700 dark:text-stone-200">
@@ -582,7 +811,7 @@ export default function App() {
                 <li>
                   <button
                     onClick={() => {
-                      setActiveTab('today');
+                      handleChangeTab('today');
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
                     className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors text-left cursor-pointer"
@@ -593,7 +822,7 @@ export default function App() {
                 <li>
                   <button
                     onClick={() => {
-                      setActiveTab('7days');
+                      handleChangeTab('7days');
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
                     className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors text-left cursor-pointer"
@@ -604,7 +833,7 @@ export default function App() {
                 <li>
                   <button
                     onClick={() => {
-                      setActiveTab('15days');
+                      handleChangeTab('15days');
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
                     className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors text-left cursor-pointer"
@@ -614,9 +843,24 @@ export default function App() {
                 </li>
                 <li>
                   <button
+                    onClick={() => handleChangeTab('blog')}
+                    className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors text-left font-bold text-brand-600 dark:text-brand-400 cursor-pointer"
+                  >
+                    Blog: Clima nos Estados & Prevenção
+                  </button>
+                </li>
+                <li>
+                  <button
                     onClick={() => {
-                      const el = document.getElementById('brazil-regions-section');
-                      el?.scrollIntoView({ behavior: 'smooth' });
+                      if (activeTab === 'blog') {
+                        handleChangeTab('today');
+                        setTimeout(() => {
+                          document.getElementById('brazil-regions-section')?.scrollIntoView({ behavior: 'smooth' });
+                        }, 120);
+                      } else {
+                        const el = document.getElementById('brazil-regions-section');
+                        el?.scrollIntoView({ behavior: 'smooth' });
+                      }
                     }}
                     className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors text-left cursor-pointer"
                   >

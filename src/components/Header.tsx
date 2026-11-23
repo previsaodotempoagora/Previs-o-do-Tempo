@@ -1,5 +1,5 @@
 import React from 'react';
-import { RefreshCw, Info, Sun, Moon, Laptop } from 'lucide-react';
+import { RefreshCw, Info, Sun, Moon, Laptop, BookOpen } from 'lucide-react';
 import { CitySearch } from './CitySearch';
 import { LocationData, ThemeMode } from '../types';
 
@@ -14,6 +14,8 @@ interface HeaderProps {
   favorites: LocationData[];
   onToggleFavorite: (location: LocationData) => void;
   onOpenInstitutional?: (tab: 'privacy' | 'terms' | 'about' | 'contact') => void;
+  onOpenBlog?: () => void;
+  isBlogActive?: boolean;
   themeMode: ThemeMode;
   onSelectThemeMode: (mode: ThemeMode) => void;
   isDarkMode: boolean;
@@ -30,6 +32,8 @@ export const Header: React.FC<HeaderProps> = ({
   favorites,
   onToggleFavorite,
   onOpenInstitutional,
+  onOpenBlog,
+  isBlogActive = false,
   themeMode,
   onSelectThemeMode,
   isDarkMode
@@ -99,6 +103,22 @@ export const Header: React.FC<HeaderProps> = ({
                   </>
                 )}
               </button>
+
+              {onOpenBlog && (
+                <button
+                  type="button"
+                  id="blog-shortcut-btn-mobile"
+                  onClick={onOpenBlog}
+                  title="Blog e guias de prevenção climática"
+                  className={`p-2 rounded-xl transition-colors cursor-pointer ${
+                    isBlogActive
+                      ? 'text-brand-600 dark:text-brand-300 bg-brand-50 dark:bg-brand-950/60'
+                      : 'text-stone-500 dark:text-stone-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-plum-800'
+                  }`}
+                >
+                  <BookOpen className="w-4 h-4" />
+                </button>
+              )}
 
               {onOpenInstitutional && (
                 <button
@@ -193,6 +213,23 @@ export const Header: React.FC<HeaderProps> = ({
                 <span>Escuro</span>
               </button>
             </div>
+
+            {onOpenBlog && (
+              <button
+                type="button"
+                id="blog-shortcut-btn-desktop"
+                onClick={onOpenBlog}
+                title="Blog sobre o clima dos estados e prevenção"
+                className={`p-2.5 rounded-xl border active:scale-95 shadow-2xs transition-all flex items-center gap-1.5 text-xs font-semibold cursor-pointer ${
+                  isBlogActive
+                    ? 'border-brand-300 dark:border-brand-700 bg-brand-50 dark:bg-brand-950/70 text-brand-700 dark:text-brand-300'
+                    : 'border-stone-200 dark:border-plum-800 bg-white dark:bg-plum-850 hover:bg-brand-50/70 dark:hover:bg-plum-800 text-stone-600 dark:text-stone-300 hover:text-brand-600 dark:hover:text-brand-300'
+                }`}
+              >
+                <BookOpen className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+                <span>Blog</span>
+              </button>
+            )}
 
             {onOpenInstitutional && (
               <button
